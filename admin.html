@@ -21,7 +21,7 @@ table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px s
 <body>
 <header>
   <strong>🌿 پیوند — پنل مدیریت</strong>
-  <div><span id="roleBadge"></span> <button id="backBtn">بازگشت به چت</button></div>
+  <div><span id="roleBadge"></span> <button id="backBtn">بازگشت به چت</button> <button id="logoutBtn" class="danger">خروج</button></div>
 </header>
 <main>
   <div id="status" class="card">در حال بررسی دسترسی...</div>
@@ -57,10 +57,33 @@ function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&l
 function showError(msg){statusBox.innerHTML='<span class="error">'+esc(msg)+'</span>';}
 
 document.getElementById("backBtn").onclick=()=>location.href="chat.html";
+document.getElementById("logoutBtn").onclick=async function(){
+  this.disabled=true;
+  this.textContent="در حال خروج...";
+  await supabaseClient.auth.signOut();
+  localStorage.removeItem("peyvand_name");
+  localStorage.removeItem("peyvand_employee");
+  localStorage.removeItem("peyvand_user_id");
+  location.replace("index.html");
+};
 
 async function getMyRole(){
-  const {data:{user},error:authError}=await supabaseClient.auth.getUser();
-  if(authError||!user) throw new Error("ابتدا باید وارد حساب پیوند شوید.");
+  const {data:{session},error:sessionError}=await supabaseClient.auth.getSession();
+  if(sessionError||!session) throw new Error("نشست ورود شما منقضی شده است.");
+  const user=session.user;
+
+  const {data:employee,error:employeeError}=await supabaseClient
+    .from("peyvand_employees")
+    .select("is_active")
+    .eq("user_id",user.id)
+    .maybeSingle();
+
+  if(employeeError||!employee||!employee.is_active){
+    await supabaseClient.auth.signOut();
+    localStorage.clear();
+    throw new Error("دسترسی این حساب غیرفعال شده است.");
+  }
+
   const {data,error}=await supabaseClient.from("peyvand_user_roles").select("role").eq("user_id",user.id).maybeSingle();
   if(error) throw error;
   if(!data) throw new Error("برای این حساب نقشی ثبت نشده است.");
@@ -136,6 +159,15 @@ async function loadRoles(){
     if(role==="owner"){ownerPanel.classList.remove("hidden"); await loadRoles();}
   }catch(e){showError(e.message||"خطا در بررسی دسترسی");}
 })();
+
+supabaseClient.auth.onAuthStateChange(function(event, session){
+  if(event === "SIGNED_OUT" || !session){
+    localStorage.removeItem("peyvand_name");
+    localStorage.removeItem("peyvand_employee");
+    localStorage.removeItem("peyvand_user_id");
+    location.replace("index.html");
+  }
+});
 </script>
 </body>
 </html>
