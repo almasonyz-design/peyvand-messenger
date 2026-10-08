@@ -50,8 +50,8 @@ hr{border:0;border-top:1px solid #e5eee9;margin:20px 0}
     <label for="employee">شماره پرسنلی</label>
     <input id="employee" type="text" placeholder="شماره پرسنلی" required>
 
-    <label for="credential">ایمیل یا شماره همراه</label>
-    <input id="credential" type="text" placeholder="ایمیل یا 09121234567" required>
+    <label for="phone">شماره همراه</label>
+    <input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="مثلاً 09121234567" required>
 
     <label for="password">رمز عبور</label>
     <input id="password" type="password" placeholder="رمز عبور" required>
@@ -73,7 +73,7 @@ hr{border:0;border-top:1px solid #e5eee9;margin:20px 0}
     <button id="logoutBtn" class="secondary" type="button">🚪 خروج از حساب</button>
   </section>
 
-  <div class="info">دسترسی فقط برای همکاران ثبت‌شده امکان‌پذیر است.</div>
+  <div class="info">فعلاً ورود با شماره همراه انجام می‌شود؛ ورود پیامکی در مرحله بعد اضافه خواهد شد.</div>
 </div>
 
 <script>
@@ -230,12 +230,12 @@ form.addEventListener("submit",async event=>{
   hideMessages();
   const name=document.getElementById("name").value.trim();
   const employee=document.getElementById("employee").value.trim();
-  const credential=document.getElementById("credential").value.trim();
+  const phone=document.getElementById("phone").value.trim();
   const password=document.getElementById("password").value;
-  const isPhone=/^(?:\+98|0098|98|0)?9\d{9}$/.test(credential.replace(/[\s-]/g,""));
-  let loginCredential=credential;
+  const isPhone=true;
+  let loginCredential=phone;
   if(isPhone){
-    let p=credential.replace(/[^\d+]/g,"");
+    let p=phone.replace(/[^\d+]/g,"");
     if(p.startsWith("00")) p="+"+p.slice(2);
     if(p.startsWith("09")&&p.length===11) p="+98"+p.slice(1);
     else if(p.startsWith("989")&&p.length===12) p="+"+p;
@@ -243,7 +243,7 @@ form.addEventListener("submit",async event=>{
   }else{
     loginCredential=credential.toLowerCase();
   }
-  if(!name||!employee||!credential||!password){showError("لطفاً همه اطلاعات را وارد کنید.");return}
+  if(!name||!employee||!phone||!password){showError("لطفاً همه اطلاعات را وارد کنید.");return}
 
   loginButton.disabled=true;
   loginButton.textContent="در حال بررسی...";
@@ -253,7 +253,7 @@ form.addEventListener("submit",async event=>{
     : {email:loginCredential,password};
   const {data:authData,error:authError}=await supabaseClient.auth.signInWithPassword(authPayload);
   if(authError){
-    showError("ایمیل یا رمز عبور صحیح نیست.");
+    showError("شماره همراه یا رمز عبور صحیح نیست.");
     loginButton.disabled=false; loginButton.textContent="ورود به پیوند"; return;
   }
 
