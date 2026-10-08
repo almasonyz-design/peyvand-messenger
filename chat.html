@@ -1,276 +1,199 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پیوند | گفتگوی همکاران</title>
 
-  <title>پیوند | چت همکاران</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Tahoma, Arial, sans-serif;
     }
 
     body {
-      background: #eef7f1;
-      min-height: 100vh;
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      background: #eef8f2;
+      color: #173b2b;
     }
 
     .app {
       max-width: 1100px;
       height: 100vh;
       margin: auto;
-      background: white;
       display: flex;
-      overflow: hidden;
-      box-shadow: 0 0 30px rgba(0,0,0,.08);
+      background: white;
+      box-shadow: 0 0 25px rgba(0,0,0,.08);
     }
 
-    /* ستون کاربران */
     .sidebar {
-      width: 320px;
-      background: #f6faf7;
-      border-left: 1px solid #e1ebe4;
-      display: flex;
-      flex-direction: column;
+      width: 280px;
+      background: #dff2e7;
+      padding: 25px 18px;
+      border-left: 1px solid #c8e4d3;
     }
 
-    .sidebar-header {
-      height: 75px;
-      background: #2f8f5b;
-      color: white;
-      display: flex;
-      align-items: center;
-      padding: 0 20px;
-      gap: 12px;
-    }
-
-    .mini-logo {
-      width: 42px;
-      height: 42px;
-      border-radius: 13px;
-      background: rgba(255,255,255,.18);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 23px;
+    .logo {
+      text-align: center;
+      font-size: 34px;
       font-weight: bold;
+      color: #198754;
+      margin-bottom: 8px;
     }
 
-    .sidebar-title {
-      font-size: 20px;
-      font-weight: bold;
+    .subtitle {
+      text-align: center;
+      color: #557565;
+      margin-bottom: 30px;
     }
 
-    .search {
-      padding: 15px;
-      border-bottom: 1px solid #e5eee8;
-    }
-
-    .search input {
-      width: 100%;
-      height: 43px;
-      border: none;
-      border-radius: 12px;
+    .user-box {
       background: white;
-      padding: 0 14px;
-      outline: none;
-      box-shadow: 0 2px 8px rgba(0,0,0,.04);
+      border-radius: 14px;
+      padding: 15px;
+      margin-bottom: 20px;
     }
 
-    .room {
-      padding: 18px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      border-bottom: 1px solid #edf2ee;
-    }
-
-    .room:hover {
-      background: #eaf5ee;
-    }
-
-    .room-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 15px;
-      background: #dff1e6;
-      color: #2f8f5b;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 23px;
-    }
-
-    .room-info {
-      flex: 1;
-    }
-
-    .room-name {
+    .user-name {
       font-weight: bold;
-      margin-bottom: 6px;
+      font-size: 17px;
+      margin-bottom: 7px;
     }
 
-    .room-last {
-      color: #87958d;
-      font-size: 12px;
+    .employee {
+      color: #667;
+      font-size: 14px;
     }
 
-    /* چت */
-    .chat {
+    .status {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #198754;
+    }
+
+    .chat-title {
+      padding: 14px;
+      border-radius: 12px;
+      background: #198754;
+      color: white;
+      font-weight: bold;
+    }
+
+    .main {
       flex: 1;
       display: flex;
       flex-direction: column;
       min-width: 0;
     }
 
-    .chat-header {
+    .header {
       height: 75px;
-      border-bottom: 1px solid #e5ebe7;
       display: flex;
       align-items: center;
-      padding: 0 22px;
-      gap: 13px;
+      padding: 0 25px;
+      border-bottom: 1px solid #e5e5e5;
+      background: white;
     }
 
-    .chat-avatar {
-      width: 45px;
-      height: 45px;
-      border-radius: 14px;
-      background: #dff1e6;
-      color: #2f8f5b;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 22px;
-    }
-
-    .chat-title {
+    .header-title {
+      font-size: 20px;
       font-weight: bold;
-      font-size: 17px;
     }
 
-    .online {
-      color: #2f8f5b;
-      font-size: 11px;
-      margin-top: 4px;
+    .live {
+      margin-right: auto;
+      color: #198754;
+      font-size: 13px;
     }
 
     .messages {
       flex: 1;
-      padding: 25px;
       overflow-y: auto;
-      background:
-        radial-gradient(#e5f0e8 1px, transparent 1px);
-      background-size: 18px 18px;
-    }
-
-    .welcome {
-      text-align: center;
-      margin: 30px auto;
-      max-width: 430px;
-      background: rgba(255,255,255,.92);
-      padding: 20px;
-      border-radius: 18px;
-      color: #728078;
-      font-size: 13px;
-      line-height: 2;
-      box-shadow: 0 4px 15px rgba(0,0,0,.04);
+      padding: 25px;
+      background: #f8fcfa;
     }
 
     .message {
-      display: flex;
+      max-width: 75%;
       margin-bottom: 14px;
-    }
-
-    .message.me {
-      justify-content: flex-start;
-    }
-
-    .message.other {
-      justify-content: flex-end;
-    }
-
-    .bubble {
-      max-width: 70%;
-      padding: 11px 15px;
-      border-radius: 17px;
-      font-size: 14px;
-      line-height: 1.8;
-    }
-
-    .me .bubble {
-      background: #dff1e6;
-      color: #244d35;
-      border-bottom-right-radius: 5px;
-    }
-
-    .other .bubble {
       background: white;
-      color: #39463f;
-      border: 1px solid #e5ece7;
-      border-bottom-left-radius: 5px;
+      border: 1px solid #e2eee7;
+      border-radius: 14px;
+      padding: 11px 14px;
+      box-shadow: 0 2px 7px rgba(0,0,0,.04);
     }
 
-    /* ارسال پیام */
+    .message.mine {
+      margin-right: auto;
+      background: #dcf5e6;
+      border-color: #c4e9d2;
+    }
+
+    .message-name {
+      font-size: 13px;
+      font-weight: bold;
+      color: #198754;
+      margin-bottom: 5px;
+    }
+
+    .message-text {
+      font-size: 15px;
+      line-height: 1.8;
+      word-break: break-word;
+    }
+
+    .message-time {
+      font-size: 10px;
+      color: #899;
+      margin-top: 5px;
+    }
+
     .composer {
-      min-height: 75px;
-      border-top: 1px solid #e5ebe7;
-      padding: 12px 18px;
+      padding: 15px;
+      border-top: 1px solid #e5e5e5;
+      background: white;
       display: flex;
       gap: 10px;
-      align-items: center;
-      background: white;
     }
 
     .composer input {
       flex: 1;
-      height: 50px;
-      border: 1px solid #dfe9e2;
-      border-radius: 15px;
-      padding: 0 16px;
+      border: 1px solid #cfe2d7;
+      border-radius: 12px;
+      padding: 13px 15px;
+      font-family: inherit;
+      font-size: 15px;
       outline: none;
-      font-size: 14px;
-      background: #f8fbf9;
     }
 
     .composer input:focus {
-      border-color: #58a975;
-      background: white;
+      border-color: #198754;
     }
 
-    .send {
-      width: 52px;
-      height: 50px;
-      border: none;
-      border-radius: 15px;
-      background: #2f8f5b;
+    .composer button {
+      border: 0;
+      border-radius: 12px;
+      padding: 0 25px;
+      background: #198754;
       color: white;
-      font-size: 20px;
+      font-family: inherit;
+      font-weight: bold;
       cursor: pointer;
     }
 
-    .send:hover {
-      background: #26784b;
+    .composer button:hover {
+      background: #157347;
     }
 
-    @media(max-width: 700px) {
-
+    @media (max-width: 700px) {
       .sidebar {
         display: none;
       }
 
-      .app {
-        width: 100%;
-      }
-
-      .bubble {
-        max-width: 85%;
+      .message {
+        max-width: 90%;
       }
     }
   </style>
@@ -280,137 +203,352 @@
 
 <div class="app">
 
-  <!-- کاربران و اتاق‌ها -->
   <aside class="sidebar">
+    <div class="logo">پیوند</div>
+    <div class="subtitle">پیام‌رسان همکاران</div>
 
-    <div class="sidebar-header">
-      <div class="mini-logo">پ</div>
-      <div class="sidebar-title">پیوند</div>
+    <div class="user-box">
+      <div class="user-name" id="userName">کاربر</div>
+      <div class="employee" id="employeeNumber">شماره پرسنلی</div>
+      <div class="status">● آنلاین</div>
     </div>
 
-    <div class="search">
-      <input
-        type="text"
-        placeholder="جستجوی همکار یا گفتگو...">
+    <div class="chat-title">
+      💬 گفتگوی همکاران
     </div>
-
-    <div class="room">
-
-      <div class="room-icon">👥</div>
-
-      <div class="room-info">
-        <div class="room-name">
-          گفتگوی همکاران
-        </div>
-
-        <div class="room-last">
-          محیط عمومی همکاران
-        </div>
-      </div>
-
-    </div>
-
   </aside>
 
+  <main class="main">
 
-  <!-- محیط چت -->
-  <main class="chat">
-
-    <header class="chat-header">
-
-      <div class="chat-avatar">
-        👥
+    <header class="header">
+      <div class="header-title">گفتگوی همکاران</div>
+      <div class="live" id="connectionStatus">
+        در حال اتصال...
       </div>
-
-      <div>
-        <div class="chat-title">
-          گفتگوی همکاران
-        </div>
-
-        <div class="online">
-          ● محیط اختصاصی پیوند
-        </div>
-      </div>
-
     </header>
 
-
     <section class="messages" id="messages">
-
-      <div class="welcome">
-        <strong>به پیوند خوش آمدید 🌱</strong>
-        <br>
-        اینجا محیط ارتباطی اختصاصی همکاران است.
-        <br>
-        پیام خود را از پایین صفحه ارسال کنید.
+      <div style="text-align:center;color:#899;padding:30px">
+        در حال دریافت پیام‌ها...
       </div>
-
     </section>
 
-
     <div class="composer">
-
       <input
         id="messageInput"
         type="text"
+        maxlength="2000"
         placeholder="پیام خود را بنویسید..."
-        onkeydown="if(event.key==='Enter') sendMessage()">
+        autocomplete="off"
+      >
 
-      <button class="send" onclick="sendMessage()">
-        ➤
+      <button id="sendButton">
+        ارسال
       </button>
-
     </div>
 
   </main>
 
 </div>
 
-
 <script>
 
-function sendMessage() {
+  // ==============================
+  // اتصال پروژه پیوند به Supabase
+  // ==============================
 
-  const input = document.getElementById("messageInput");
-  const text = input.value.trim();
+  const SUPABASE_URL =
+    "https://ydgfjupryhuiyriaxvin.supabase.co";
 
-  if (!text) return;
+  const SUPABASE_KEY =
+    "sb_publishable__hlPVmThO6PDb-_LSvMzWw_uAeHKMxs";
 
-  const name =
-    localStorage.getItem("peyvand_name") || "من";
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
 
-  const messages =
+
+  // ==============================
+  // اطلاعات کاربر
+  // ==============================
+
+  const userName =
+    localStorage.getItem("peyvand_name") || "کاربر";
+
+  const employeeNumber =
+    localStorage.getItem("peyvand_employee") || "بدون شماره پرسنلی";
+
+
+  document.getElementById("userName").textContent =
+    userName;
+
+  document.getElementById("employeeNumber").textContent =
+    "پرسنلی: " + employeeNumber;
+
+
+  // ==============================
+  // نمایش پیام
+  // ==============================
+
+  const messagesBox =
     document.getElementById("messages");
 
-  const message =
-    document.createElement("div");
+  function escapeHtml(text) {
 
-  message.className = "message me";
+    const div = document.createElement("div");
 
-  message.innerHTML = `
-    <div class="bubble">
-      <strong>${escapeHtml(name)}</strong>
-      <br>
-      ${escapeHtml(text)}
-    </div>
-  `;
+    div.textContent = text;
 
-  messages.appendChild(message);
-
-  input.value = "";
-
-  messages.scrollTop = messages.scrollHeight;
-}
+    return div.innerHTML;
+  }
 
 
-function escapeHtml(text) {
+  function showMessage(message) {
 
-  const div = document.createElement("div");
+    // اگر پیام قبلی placeholder بود
+    const first = messagesBox.firstElementChild;
 
-  div.textContent = text;
+    if (
+      first &&
+      first.textContent.includes("در حال دریافت")
+    ) {
+      messagesBox.innerHTML = "";
+    }
 
-  return div.innerHTML;
-}
+    const div =
+      document.createElement("div");
+
+    div.className = "message";
+
+    if (
+      message.employee === employeeNumber
+    ) {
+      div.classList.add("mine");
+    }
+
+    const time =
+      new Date(message.created_at)
+        .toLocaleTimeString("fa-IR", {
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+
+    div.innerHTML = `
+      <div class="message-name">
+        ${escapeHtml(message.name)}
+      </div>
+
+      <div class="message-text">
+        ${escapeHtml(message.message)}
+      </div>
+
+      <div class="message-time">
+        ${time}
+      </div>
+    `;
+
+    messagesBox.appendChild(div);
+
+    messagesBox.scrollTop =
+      messagesBox.scrollHeight;
+  }
+
+
+  // ==============================
+  // دریافت پیام‌های قبلی
+  // ==============================
+
+  async function loadMessages() {
+
+    const { data, error } =
+      await supabaseClient
+        .from("peyvand_messages")
+        .select("*")
+        .eq("room", "general")
+        .order("created_at", {
+          ascending: true
+        });
+
+    if (error) {
+
+      console.error(error);
+
+      messagesBox.innerHTML = `
+        <div style="
+          text-align:center;
+          color:#b42318;
+          padding:30px;
+        ">
+          خطا در دریافت پیام‌ها
+        </div>
+      `;
+
+      return;
+    }
+
+    messagesBox.innerHTML = "";
+
+    if (!data || data.length === 0) {
+
+      messagesBox.innerHTML = `
+        <div style="
+          text-align:center;
+          color:#899;
+          padding:30px;
+        ">
+          هنوز پیامی ارسال نشده است.
+        </div>
+      `;
+
+      return;
+    }
+
+    data.forEach(showMessage);
+  }
+
+
+  // ==============================
+  // ارسال پیام
+  // ==============================
+
+  async function sendMessage() {
+
+    const input =
+      document.getElementById("messageInput");
+
+    const text =
+      input.value.trim();
+
+    if (!text) return;
+
+
+    const button =
+      document.getElementById("sendButton");
+
+    button.disabled = true;
+
+    const { error } =
+      await supabaseClient
+        .from("peyvand_messages")
+        .insert({
+          room: "general",
+          name: userName,
+          employee: employeeNumber,
+          message: text
+        });
+
+
+    button.disabled = false;
+
+
+    if (error) {
+
+      console.error(error);
+
+      alert(
+        "پیام ارسال نشد:\n" +
+        error.message
+      );
+
+      return;
+    }
+
+
+    input.value = "";
+
+    input.focus();
+  }
+
+
+  // ==============================
+  // دکمه ارسال
+  // ==============================
+
+  document
+    .getElementById("sendButton")
+    .addEventListener(
+      "click",
+      sendMessage
+    );
+
+
+  // ارسال با Enter
+
+  document
+    .getElementById("messageInput")
+    .addEventListener(
+      "keydown",
+      function(event) {
+
+        if (event.key === "Enter") {
+
+          event.preventDefault();
+
+          sendMessage();
+        }
+
+      }
+    );
+
+
+  // ==============================
+  // اتصال لحظه‌ای Realtime
+  // ==============================
+
+  const channel =
+    supabaseClient
+      .channel("peyvand-live-chat")
+
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "peyvand_messages",
+          filter: "room=eq.general"
+        },
+
+        function(payload) {
+
+          showMessage(payload.new);
+
+        }
+      )
+
+      .subscribe(function(status) {
+
+        const statusBox =
+          document.getElementById(
+            "connectionStatus"
+          );
+
+        if (status === "SUBSCRIBED") {
+
+          statusBox.textContent =
+            "● اتصال زنده برقرار است";
+
+          statusBox.style.color =
+            "#198754";
+
+        } else {
+
+          statusBox.textContent =
+            "● در حال اتصال...";
+
+          statusBox.style.color =
+            "#b7791f";
+        }
+
+      });
+
+
+  // ==============================
+  // شروع برنامه
+  // ==============================
+
+  loadMessages();
 
 </script>
 
