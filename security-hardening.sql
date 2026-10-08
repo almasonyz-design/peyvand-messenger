@@ -84,7 +84,8 @@ create trigger peyvand_secure_message_trigger
 before insert on public.peyvand_messages
 for each row execute function public.peyvand_secure_message();
 
--- Basic anti-spam protection: max 5 messages per 10 seconds per user.
+-- Basic anti-spam protection: max 5 messages per 10 seconds per authenticated user.
+-- Uses auth.uid() directly so the browser cannot influence the rate-limit identity.
 create or replace function public.peyvand_message_rate_limit()
 returns trigger
 language plpgsql
@@ -92,14 +93,20 @@ security definer
 set search_path = public
 as $$
 begin
+  if auth.uid() is null then
+    raise exception 'احراز هویت الزامی است';
+  end if;
+
   if (
     select count(*)
-    from public.peyvand_messages
-    where employee = new.employee
-      and created_at > now() - interval '10 seconds'
+    from public.peyvand_messages m
+    join public.peyvand_employees e on e.employee_number = m.employee
+    where e.user_id = auth.uid()
+      and m.created_at > now() - interval '10 seconds'
   ) >= 5 then
     raise exception 'تعداد پیام‌ها بیش از حد مجاز است. چند ثانیه صبر کنید.';
   end if;
+
   return new;
 end;
 $$;
