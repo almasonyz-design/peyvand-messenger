@@ -1,219 +1,319 @@
+```html
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>پیوند | پیام‌رسان همکاران</title>
+
+  <title>پیوند | ورود همکاران</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     * {
       box-sizing: border-box;
-      font-family: Tahoma, Arial, sans-serif;
     }
 
     body {
       margin: 0;
       min-height: 100vh;
       display: flex;
-      justify-content: center;
       align-items: center;
-      background: linear-gradient(135deg, #e8f6ed, #f8fbf9);
-      color: #26372e;
+      justify-content: center;
+      font-family: Tahoma, Arial, sans-serif;
+      background: #eef8f2;
+      color: #173b2b;
     }
 
-    .container {
+    .login-box {
       width: 100%;
-      max-width: 440px;
-      padding: 20px;
-    }
-
-    .card {
+      max-width: 420px;
       background: white;
-      border-radius: 28px;
-      padding: 38px 30px;
-      text-align: center;
-      box-shadow: 0 18px 50px rgba(40,100,65,.13);
+      padding: 35px;
+      border-radius: 22px;
+      box-shadow: 0 10px 35px rgba(0,0,0,.08);
     }
 
     .logo {
-      width: 84px;
-      height: 84px;
-      margin: auto;
-      margin-bottom: 18px;
-      border-radius: 25px;
-      background: #2f8f5b;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 40px;
+      text-align: center;
+      font-size: 42px;
       font-weight: bold;
-    }
-
-    h1 {
-      color: #26784b;
-      font-size: 32px;
-      margin: 0 0 8px;
+      color: #198754;
+      margin-bottom: 8px;
     }
 
     .subtitle {
-      color: #718078;
-      font-size: 14px;
+      text-align: center;
+      color: #667;
       margin-bottom: 30px;
-    }
-
-    .input-group {
-      text-align: right;
-      margin-bottom: 18px;
     }
 
     label {
       display: block;
       margin-bottom: 8px;
-      font-size: 14px;
       font-weight: bold;
+      font-size: 14px;
     }
 
     input {
       width: 100%;
-      height: 53px;
-      border: 1px solid #dce8e0;
-      border-radius: 14px;
-      padding: 0 16px;
+      padding: 14px;
+      border: 1px solid #cfe2d7;
+      border-radius: 12px;
+      margin-bottom: 18px;
+      font-family: inherit;
       font-size: 15px;
       outline: none;
-      background: #f9fcfa;
     }
 
     input:focus {
-      border-color: #48a66d;
-      background: white;
+      border-color: #198754;
     }
 
     button {
       width: 100%;
-      height: 54px;
+      padding: 14px;
       border: 0;
-      border-radius: 15px;
-      background: #2f8f5b;
+      border-radius: 12px;
+      background: #198754;
       color: white;
+      font-family: inherit;
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      margin-top: 8px;
     }
 
     button:hover {
-      background: #26784b;
+      background: #157347;
     }
 
-    .security {
-      margin-top: 24px;
-      padding: 13px;
-      border-radius: 13px;
-      background: #f0f8f3;
-      color: #64806e;
-      font-size: 12px;
-      line-height: 1.9;
+    button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
     }
 
     .error {
       display: none;
       margin-top: 15px;
-      padding: 10px;
+      padding: 12px;
       border-radius: 10px;
-      background: #fff1f1;
-      color: #b44b4b;
-      font-size: 12px;
+      background: #fff1f0;
+      color: #b42318;
+      font-size: 13px;
+      line-height: 1.8;
     }
 
-    .footer {
-      margin-top: 22px;
-      color: #9aa9a0;
-      font-size: 11px;
+    .info {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #899;
+      line-height: 1.8;
     }
   </style>
 </head>
 
 <body>
 
-<div class="container">
+  <div class="login-box">
 
-  <div class="card">
-
-    <div class="logo">پ</div>
-
-    <h1>پیوند</h1>
+    <div class="logo">پیوند</div>
 
     <div class="subtitle">
       پیام‌رسان اختصاصی همکاران
     </div>
 
-    <div class="input-group">
-      <label>نام و نام خانوادگی</label>
+    <form id="loginForm">
+
+      <label for="name">
+        نام و نام خانوادگی
+      </label>
 
       <input
         id="name"
         type="text"
-        placeholder="نام و نام خانوادگی">
-    </div>
+        placeholder="مثلاً محمدحسین رافعی"
+        required
+      >
 
-    <div class="input-group">
-      <label>شماره پرسنلی</label>
+      <label for="employee">
+        شماره پرسنلی
+      </label>
 
       <input
         id="employee"
         type="text"
-        inputmode="numeric"
-        placeholder="شماره پرسنلی">
-    </div>
+        placeholder="شماره پرسنلی"
+        required
+      >
 
-    <button id="loginButton" type="button">
-      ورود به پیوند
-    </button>
+      <label for="email">
+        ایمیل
+      </label>
 
-    <div id="error" class="error">
-      لطفاً نام و شماره پرسنلی را وارد کنید.
-    </div>
+      <input
+        id="email"
+        type="email"
+        placeholder="ایمیل حساب کاربری"
+        required
+      >
 
-    <div class="security">
-      🔒 ورود با هویت سازمانی همکاران
-      <br>
-      ارتباطات داخلی و اختصاصی
-    </div>
+      <label for="password">
+        رمز عبور
+      </label>
 
-    <div class="footer">
-      سامانه پیام‌رسان «پیوند»
+      <input
+        id="password"
+        type="password"
+        placeholder="رمز عبور"
+        required
+      >
+
+      <button
+        id="loginButton"
+        type="submit"
+      >
+        ورود به پیوند
+      </button>
+
+      <div
+        id="errorBox"
+        class="error"
+      ></div>
+
+    </form>
+
+    <div class="info">
+      حساب کاربری توسط مدیر سامانه ایجاد می‌شود.
     </div>
 
   </div>
 
-</div>
-
 
 <script>
 
-  document
-    .getElementById("loginButton")
-    .addEventListener("click", function () {
+  // ==============================
+  // Supabase
+  // ==============================
+
+  const SUPABASE_URL =
+    "https://ydgfjupryhuiyriaxvin.supabase.co";
+
+  const SUPABASE_KEY =
+    "sb_publishable__hlPVmThO6PDb-_LSvMzWw_uAeHKMxs";
+
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+
+  // ==============================
+  // عناصر صفحه
+  // ==============================
+
+  const form =
+    document.getElementById("loginForm");
+
+  const loginButton =
+    document.getElementById("loginButton");
+
+  const errorBox =
+    document.getElementById("errorBox");
+
+
+  function showError(message) {
+
+    errorBox.textContent = message;
+
+    errorBox.style.display = "block";
+  }
+
+
+  // ==============================
+  // ورود
+  // ==============================
+
+  form.addEventListener(
+    "submit",
+    async function(event) {
+
+      event.preventDefault();
+
+      errorBox.style.display = "none";
 
       const name =
-        document.getElementById("name").value.trim();
+        document
+          .getElementById("name")
+          .value
+          .trim();
 
       const employee =
-        document.getElementById("employee").value.trim();
+        document
+          .getElementById("employee")
+          .value
+          .trim();
 
-      const error =
-        document.getElementById("error");
+      const email =
+        document
+          .getElementById("email")
+          .value
+          .trim();
 
-      if (!name || !employee) {
+      const password =
+        document
+          .getElementById("password")
+          .value;
 
-        error.style.display = "block";
+
+      if (!name || !employee || !email || !password) {
+
+        showError(
+          "لطفاً همه اطلاعات را وارد کنید."
+        );
 
         return;
       }
 
-      error.style.display = "none";
+
+      loginButton.disabled = true;
+
+      loginButton.textContent =
+        "در حال ورود...";
+
+
+      // ورود واقعی به Supabase Auth
+
+      const { data, error } =
+        await supabaseClient.auth.signInWithPassword({
+
+          email: email,
+
+          password: password
+
+        });
+
+
+      if (error) {
+
+        console.error(error);
+
+        showError(
+          "ورود ناموفق بود. ایمیل یا رمز عبور صحیح نیست."
+        );
+
+        loginButton.disabled = false;
+
+        loginButton.textContent =
+          "ورود به پیوند";
+
+        return;
+      }
+
+
+      // ذخیره اطلاعات نمایشی کاربر
 
       localStorage.setItem(
         "peyvand_name",
@@ -225,14 +325,25 @@
         employee
       );
 
-      // انتقال قطعی به صفحه چت
-      window.location.assign(
-        "https://almasonyz-design.github.io/peyvand-messenger/chat.html"
+
+      // ذخیره شناسه واقعی کاربر
+
+      localStorage.setItem(
+        "peyvand_user_id",
+        data.user.id
       );
 
-    });
+
+      // ورود موفق
+
+      window.location.href =
+        "https://almasonyz-design.github.io/peyvand-messenger/chat.html";
+
+    }
+  );
 
 </script>
 
 </body>
 </html>
+```
