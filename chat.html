@@ -1,8 +1,11 @@
+```html
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>پیوند | گفتگوی همکاران</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -115,6 +118,12 @@
       background: #f8fcfa;
     }
 
+    .empty {
+      text-align: center;
+      color: #899;
+      padding: 30px;
+    }
+
     .message {
       max-width: 75%;
       margin-bottom: 14px;
@@ -183,7 +192,12 @@
       cursor: pointer;
     }
 
-    .composer button:hover {
+    .composer button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .composer button:hover:not(:disabled) {
       background: #157347;
     }
 
@@ -204,36 +218,74 @@
 <div class="app">
 
   <aside class="sidebar">
-    <div class="logo">پیوند</div>
-    <div class="subtitle">پیام‌رسان همکاران</div>
+
+    <div class="logo">
+      پیوند
+    </div>
+
+    <div class="subtitle">
+      پیام‌رسان همکاران
+    </div>
 
     <div class="user-box">
-      <div class="user-name" id="userName">کاربر</div>
-      <div class="employee" id="employeeNumber">شماره پرسنلی</div>
-      <div class="status">● آنلاین</div>
+
+      <div
+        class="user-name"
+        id="userName"
+      >
+        کاربر
+      </div>
+
+      <div
+        class="employee"
+        id="employeeNumber"
+      >
+        پرسنلی
+      </div>
+
+      <div class="status">
+        ● آنلاین
+      </div>
+
     </div>
 
     <div class="chat-title">
       💬 گفتگوی همکاران
     </div>
+
   </aside>
+
 
   <main class="main">
 
     <header class="header">
-      <div class="header-title">گفتگوی همکاران</div>
-      <div class="live" id="connectionStatus">
+
+      <div class="header-title">
+        گفتگوی همکاران
+      </div>
+
+      <div
+        class="live"
+        id="connectionStatus"
+      >
         در حال اتصال...
       </div>
+
     </header>
 
-    <section class="messages" id="messages">
-      <div style="text-align:center;color:#899;padding:30px">
+
+    <section
+      class="messages"
+      id="messages"
+    >
+      <div class="empty">
         در حال دریافت پیام‌ها...
       </div>
     </section>
 
+
     <div class="composer">
+
       <input
         id="messageInput"
         type="text"
@@ -242,26 +294,32 @@
         autocomplete="off"
       >
 
-      <button id="sendButton">
+      <button
+        id="sendButton"
+        type="button"
+      >
         ارسال
       </button>
+
     </div>
 
   </main>
 
 </div>
 
+
 <script>
 
-  // ==============================
-  // اتصال پروژه پیوند به Supabase
-  // ==============================
+  // =====================================
+  // اتصال Supabase
+  // =====================================
 
   const SUPABASE_URL =
     "https://ydgfjupryhuiyriaxvin.supabase.co";
 
   const SUPABASE_KEY =
     "sb_publishable__hlPVmThO6PDb-_LSvMzWw_uAeHKMxs";
+
 
   const supabaseClient =
     window.supabase.createClient(
@@ -270,34 +328,57 @@
     );
 
 
-  // ==============================
+  // =====================================
   // اطلاعات کاربر
-  // ==============================
+  // =====================================
 
   const userName =
-    localStorage.getItem("peyvand_name") || "کاربر";
+    localStorage.getItem("peyvand_name")
+    || "کاربر";
+
 
   const employeeNumber =
-    localStorage.getItem("peyvand_employee") || "بدون شماره پرسنلی";
+    localStorage.getItem("peyvand_employee")
+    || "بدون شماره پرسنلی";
 
 
-  document.getElementById("userName").textContent =
-    userName;
+  document.getElementById(
+    "userName"
+  ).textContent = userName;
 
-  document.getElementById("employeeNumber").textContent =
+
+  document.getElementById(
+    "employeeNumber"
+  ).textContent =
     "پرسنلی: " + employeeNumber;
 
-
-  // ==============================
-  // نمایش پیام
-  // ==============================
 
   const messagesBox =
     document.getElementById("messages");
 
+
+  const messageInput =
+    document.getElementById("messageInput");
+
+
+  const sendButton =
+    document.getElementById("sendButton");
+
+
+  const connectionStatus =
+    document.getElementById(
+      "connectionStatus"
+    );
+
+
+  // =====================================
+  // جلوگیری از HTML خطرناک
+  // =====================================
+
   function escapeHtml(text) {
 
-    const div = document.createElement("div");
+    const div =
+      document.createElement("div");
 
     div.textContent = text;
 
@@ -305,22 +386,46 @@
   }
 
 
+  // =====================================
+  // نمایش پیام
+  // =====================================
+
   function showMessage(message) {
 
-    // اگر پیام قبلی placeholder بود
-    const first = messagesBox.firstElementChild;
+    // اگر پیام قبلی در صفحه وجود دارد،
+    // دوباره همان پیام را نمایش نده
 
     if (
-      first &&
-      first.textContent.includes("در حال دریافت")
+      document.querySelector(
+        '[data-message-id="' +
+        message.id +
+        '"]'
+      )
     ) {
-      messagesBox.innerHTML = "";
+      return;
     }
+
+
+    const empty =
+      messagesBox.querySelector(".empty");
+
+    if (empty) {
+      empty.remove();
+    }
+
 
     const div =
       document.createElement("div");
 
+
     div.className = "message";
+
+
+    div.setAttribute(
+      "data-message-id",
+      message.id
+    );
+
 
     if (
       message.employee === employeeNumber
@@ -328,14 +433,21 @@
       div.classList.add("mine");
     }
 
+
     const time =
-      new Date(message.created_at)
-        .toLocaleTimeString("fa-IR", {
+      new Date(
+        message.created_at
+      ).toLocaleTimeString(
+        "fa-IR",
+        {
           hour: "2-digit",
           minute: "2-digit"
-        });
+        }
+      );
+
 
     div.innerHTML = `
+
       <div class="message-name">
         ${escapeHtml(message.name)}
       </div>
@@ -347,40 +459,49 @@
       <div class="message-time">
         ${time}
       </div>
+
     `;
 
+
     messagesBox.appendChild(div);
+
 
     messagesBox.scrollTop =
       messagesBox.scrollHeight;
   }
 
 
-  // ==============================
+  // =====================================
   // دریافت پیام‌های قبلی
-  // ==============================
+  // =====================================
 
   async function loadMessages() {
 
-    const { data, error } =
+    const {
+      data,
+      error
+    } =
       await supabaseClient
         .from("peyvand_messages")
         .select("*")
         .eq("room", "general")
-        .order("created_at", {
-          ascending: true
-        });
+        .order(
+          "created_at",
+          {
+            ascending: true
+          }
+        );
+
 
     if (error) {
 
-      console.error(error);
+      console.error(
+        "LOAD ERROR:",
+        error
+      );
 
       messagesBox.innerHTML = `
-        <div style="
-          text-align:center;
-          color:#b42318;
-          padding:30px;
-        ">
+        <div class="empty">
           خطا در دریافت پیام‌ها
         </div>
       `;
@@ -388,16 +509,17 @@
       return;
     }
 
+
     messagesBox.innerHTML = "";
 
-    if (!data || data.length === 0) {
+
+    if (
+      !data ||
+      data.length === 0
+    ) {
 
       messagesBox.innerHTML = `
-        <div style="
-          text-align:center;
-          color:#899;
-          padding:30px;
-        ">
+        <div class="empty">
           هنوز پیامی ارسال نشده است.
         </div>
       `;
@@ -405,101 +527,135 @@
       return;
     }
 
-    data.forEach(showMessage);
+
+    data.forEach(
+      showMessage
+    );
+
   }
 
 
-  // ==============================
+  // =====================================
   // ارسال پیام
-  // ==============================
+  // =====================================
 
   async function sendMessage() {
 
-    const input =
-      document.getElementById("messageInput");
-
     const text =
-      input.value.trim();
-
-    if (!text) return;
+      messageInput.value.trim();
 
 
-    const button =
-      document.getElementById("sendButton");
+    if (!text) {
+      return;
+    }
 
-    button.disabled = true;
 
-    const { error } =
+    sendButton.disabled = true;
+
+
+    const newMessage = {
+
+      room: "general",
+
+      name: userName,
+
+      employee: employeeNumber,
+
+      message: text
+
+    };
+
+
+    const {
+      data,
+      error
+    } =
       await supabaseClient
         .from("peyvand_messages")
-        .insert({
-          room: "general",
-          name: userName,
-          employee: employeeNumber,
-          message: text
-        });
-
-
-    button.disabled = false;
+        .insert(newMessage)
+        .select()
+        .single();
 
 
     if (error) {
 
-      console.error(error);
+      console.error(
+        "SEND ERROR:",
+        error
+      );
 
       alert(
         "پیام ارسال نشد:\n" +
         error.message
       );
 
+      sendButton.disabled = false;
+
       return;
     }
 
 
-    input.value = "";
+    // مهم:
+    // پیام بلافاصله روی صفحه نمایش داده می‌شود.
+    // بنابراین حتی اگر Realtime تأخیر داشته باشد
+    // کاربر پیام خودش را می‌بیند.
 
-    input.focus();
+    if (data) {
+      showMessage(data);
+    }
+
+
+    messageInput.value = "";
+
+    messageInput.focus();
+
+
+    sendButton.disabled = false;
+
   }
 
 
-  // ==============================
+  // =====================================
   // دکمه ارسال
-  // ==============================
+  // =====================================
 
-  document
-    .getElementById("sendButton")
-    .addEventListener(
-      "click",
-      sendMessage
-    );
+  sendButton.addEventListener(
+    "click",
+    sendMessage
+  );
 
 
+  // =====================================
   // ارسال با Enter
+  // =====================================
 
-  document
-    .getElementById("messageInput")
-    .addEventListener(
-      "keydown",
-      function(event) {
+  messageInput.addEventListener(
+    "keydown",
+    function(event) {
 
-        if (event.key === "Enter") {
+      if (
+        event.key === "Enter"
+      ) {
 
-          event.preventDefault();
+        event.preventDefault();
 
-          sendMessage();
-        }
+        sendMessage();
 
       }
-    );
+
+    }
+  );
 
 
-  // ==============================
-  // اتصال لحظه‌ای Realtime
-  // ==============================
+  // =====================================
+  // Realtime
+  // =====================================
 
   const channel =
     supabaseClient
-      .channel("peyvand-live-chat")
+      .channel(
+        "peyvand-live-chat"
+      )
 
       .on(
         "postgres_changes",
@@ -512,41 +668,54 @@
 
         function(payload) {
 
-          showMessage(payload.new);
+          console.log(
+            "REALTIME:",
+            payload
+          );
+
+          showMessage(
+            payload.new
+          );
 
         }
       )
 
-      .subscribe(function(status) {
+      .subscribe(
+        function(status) {
 
-        const statusBox =
-          document.getElementById(
-            "connectionStatus"
+          console.log(
+            "REALTIME STATUS:",
+            status
           );
 
-        if (status === "SUBSCRIBED") {
 
-          statusBox.textContent =
-            "● اتصال زنده برقرار است";
+          if (
+            status === "SUBSCRIBED"
+          ) {
 
-          statusBox.style.color =
-            "#198754";
+            connectionStatus.textContent =
+              "● اتصال زنده برقرار است";
 
-        } else {
+            connectionStatus.style.color =
+              "#198754";
 
-          statusBox.textContent =
-            "● در حال اتصال...";
+          } else {
 
-          statusBox.style.color =
-            "#b7791f";
+            connectionStatus.textContent =
+              "● در حال اتصال...";
+
+            connectionStatus.style.color =
+              "#b7791f";
+
+          }
+
         }
+      );
 
-      });
 
-
-  // ==============================
-  // شروع برنامه
-  // ==============================
+  // =====================================
+  // شروع
+  // =====================================
 
   loadMessages();
 
@@ -554,3 +723,4 @@
 
 </body>
 </html>
+```
