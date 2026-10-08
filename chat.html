@@ -1,825 +1,178 @@
-```html
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>پیوند | گفتگوی همکاران</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Tahoma, Arial, sans-serif;
-      background: #eef8f2;
-      color: #173b2b;
-    }
-
-    .app {
-      max-width: 1100px;
-      height: 100vh;
-      margin: auto;
-      display: flex;
-      background: white;
-      box-shadow: 0 0 25px rgba(0,0,0,.08);
-    }
-
-    .sidebar {
-      width: 280px;
-      background: #dff2e7;
-      padding: 25px 18px;
-      border-left: 1px solid #c8e4d3;
-    }
-
-    .logo {
-      text-align: center;
-      font-size: 34px;
-      font-weight: bold;
-      color: #198754;
-      margin-bottom: 8px;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #557565;
-      margin-bottom: 30px;
-    }
-
-    .user-box {
-      background: white;
-      border-radius: 14px;
-      padding: 15px;
-      margin-bottom: 20px;
-    }
-
-    .user-name {
-      font-weight: bold;
-      font-size: 17px;
-      margin-bottom: 7px;
-    }
-
-    .employee {
-      color: #667;
-      font-size: 14px;
-    }
-
-    .status {
-      margin-top: 12px;
-      font-size: 13px;
-      color: #198754;
-    }
-
-    .chat-title {
-      padding: 14px;
-      border-radius: 12px;
-      background: #198754;
-      color: white;
-      font-weight: bold;
-    }
-
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-
-    .header {
-      height: 75px;
-      display: flex;
-      align-items: center;
-      padding: 0 25px;
-      border-bottom: 1px solid #e5e5e5;
-      background: white;
-    }
-
-    .header-title {
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .live {
-      margin-right: auto;
-      color: #198754;
-      font-size: 13px;
-    }
-
-    .messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 25px;
-      background: #f8fcfa;
-    }
-
-    .empty {
-      text-align: center;
-      color: #899;
-      padding: 30px;
-    }
-
-    .message {
-      max-width: 75%;
-      margin-bottom: 14px;
-      background: white;
-      border: 1px solid #e2eee7;
-      border-radius: 14px;
-      padding: 11px 14px;
-      box-shadow: 0 2px 7px rgba(0,0,0,.04);
-    }
-
-    .message.mine {
-      margin-right: auto;
-      background: #dcf5e6;
-      border-color: #c4e9d2;
-    }
-
-    .message-name {
-      font-size: 13px;
-      font-weight: bold;
-      color: #198754;
-      margin-bottom: 5px;
-    }
-
-    .message-text {
-      font-size: 15px;
-      line-height: 1.8;
-      word-break: break-word;
-    }
-
-    .message-time {
-      font-size: 10px;
-      color: #899;
-      margin-top: 5px;
-    }
-
-    .composer {
-      padding: 15px;
-      border-top: 1px solid #e5e5e5;
-      background: white;
-      display: flex;
-      gap: 10px;
-    }
-
-    .composer input {
-      flex: 1;
-      border: 1px solid #cfe2d7;
-      border-radius: 12px;
-      padding: 13px 15px;
-      font-family: inherit;
-      font-size: 15px;
-      outline: none;
-    }
-
-    .composer input:focus {
-      border-color: #198754;
-    }
-
-    .composer button {
-      border: 0;
-      border-radius: 12px;
-      padding: 0 25px;
-      background: #198754;
-      color: white;
-      font-family: inherit;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .composer button:disabled {
-      opacity: .6;
-      cursor: not-allowed;
-    }
-
-    .composer button:hover:not(:disabled) {
-      background: #157347;
-    }
-
-    @media (max-width: 700px) {
-      .sidebar {
-        display: none;
-      }
-
-      .message {
-        max-width: 90%;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پیوند | گفتگوی همکاران</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#eef8f2;color:#173b2b}
+.app{max-width:1100px;height:100vh;margin:auto;display:flex;background:white;box-shadow:0 0 25px rgba(0,0,0,.08)}
+.sidebar{width:280px;background:#dff2e7;padding:25px 18px;border-left:1px solid #c8e4d3}
+.logo{text-align:center;font-size:34px;font-weight:bold;color:#198754;margin-bottom:8px}
+.subtitle{text-align:center;color:#557565;margin-bottom:30px}
+.user-box{background:white;border-radius:14px;padding:15px;margin-bottom:20px}
+.user-name{font-weight:bold;font-size:17px;margin-bottom:7px}
+.employee{color:#667;font-size:14px}
+.status{margin-top:12px;font-size:13px;color:#198754}
+.account-btn{width:100%;margin-top:12px;border:0;border-radius:10px;padding:10px 12px;color:white;font-family:inherit;font-weight:bold;cursor:pointer}
+.account-btn.admin{background:#2f7d57}
+.account-btn.admin:hover{background:#256447}
+.account-btn.logout{background:#b83a3a}
+.account-btn.logout:hover{background:#9f3030}
+.account-btn:disabled{opacity:.6;cursor:not-allowed}
+.chat-title{padding:14px;border-radius:12px;background:#198754;color:white;font-weight:bold}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.header{height:75px;display:flex;align-items:center;padding:0 25px;border-bottom:1px solid #e5e5e5;background:white}
+.header-title{font-size:20px;font-weight:bold}
+.live{margin-right:auto;color:#198754;font-size:13px}
+.messages{flex:1;overflow-y:auto;padding:25px;background:#f8fcfa}
+.empty{text-align:center;color:#899;padding:30px}
+.message{max-width:75%;margin-bottom:14px;background:white;border:1px solid #e2eee7;border-radius:14px;padding:11px 14px;box-shadow:0 2px 7px rgba(0,0,0,.04)}
+.message.mine{margin-right:auto;background:#dcf5e6;border-color:#c4e9d2}
+.message-name{font-size:13px;font-weight:bold;color:#198754;margin-bottom:5px}
+.message-text{font-size:15px;line-height:1.8;word-break:break-word}
+.message-time{font-size:10px;color:#899;margin-top:5px}
+.composer{padding:15px;border-top:1px solid #e5e5e5;background:white;display:flex;gap:10px}
+.composer input{flex:1;border:1px solid #cfe2d7;border-radius:12px;padding:13px 15px;font-family:inherit;font-size:15px;outline:none}
+.composer input:focus{border-color:#198754}
+.composer button{border:0;border-radius:12px;padding:0 25px;background:#198754;color:white;font-family:inherit;font-weight:bold;cursor:pointer}
+.composer button:disabled{opacity:.6;cursor:not-allowed}
+.composer button:hover:not(:disabled){background:#157347}
+@media(max-width:700px){.sidebar{display:none}.message{max-width:90%}}
+</style>
 </head>
-
 <body>
-
 <div class="app">
-
-  <aside class="sidebar">
-
-    <div class="logo">
-      پیوند
-    </div>
-
-    <div class="subtitle">
-      پیام‌رسان همکاران
-    </div>
-
-    <div class="user-box">
-
-      <div
-        class="user-name"
-        id="userName"
-      >
-        کاربر
-      </div>
-
-      <div
-        class="employee"
-        id="employeeNumber"
-      >
-        پرسنلی
-      </div>
-
-      <div class="status">
-        ● آنلاین
-      </div>
-
-    </div>
-
-    <div class="chat-title">
-      💬 گفتگوی همکاران
-    </div>
-
-  </aside>
-
-
-  <main class="main">
-
-    <header class="header">
-
-      <div class="header-title">
-        گفتگوی همکاران
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;margin-right:20px">
-        <button id="adminButton" type="button" style="display:none;border:0;border-radius:9px;padding:8px 12px;background:#2f7d57;color:white;font-family:inherit;cursor:pointer">پنل مدیریت</button>
-        <button id="logoutButton" type="button" style="border:0;border-radius:9px;padding:8px 12px;background:#b83a3a;color:white;font-family:inherit;cursor:pointer">خروج</button>
-      </div>
-
-      <div
-        class="live"
-        id="connectionStatus"
-      >
-        در حال اتصال...
-      </div>
-
-    </header>
-
-
-    <section
-      class="messages"
-      id="messages"
-    >
-      <div class="empty">
-        در حال دریافت پیام‌ها...
-      </div>
-    </section>
-
-
-    <div class="composer">
-
-      <input
-        id="messageInput"
-        type="text"
-        maxlength="2000"
-        placeholder="پیام خود را بنویسید..."
-        autocomplete="off"
-      >
-
-      <button
-        id="sendButton"
-        type="button"
-      >
-        ارسال
-      </button>
-
-    </div>
-
-  </main>
-
+<aside class="sidebar">
+<div class="logo">پیوند</div>
+<div class="subtitle">پیام‌رسان همکاران</div>
+<div class="user-box">
+<div class="user-name" id="userName">کاربر</div>
+<div class="employee" id="employeeNumber">پرسنلی</div>
+<div class="status">● حساب فعال</div>
+<button id="adminButton" class="account-btn admin" type="button" style="display:none">🛡️ پنل مدیریت</button>
+<button id="logoutButton" class="account-btn logout" type="button">🚪 خروج از حساب</button>
 </div>
-
-
+<div class="chat-title">💬 گفتگوی همکاران</div>
+</aside>
+<main class="main">
+<header class="header">
+<div class="header-title">گفتگوی همکاران</div>
+<div class="live" id="connectionStatus">در حال اتصال...</div>
+</header>
+<section class="messages" id="messages"><div class="empty">در حال دریافت پیام‌ها...</div></section>
+<div class="composer">
+<input id="messageInput" type="text" maxlength="2000" placeholder="پیام خود را بنویسید..." autocomplete="off">
+<button id="sendButton" type="button">ارسال</button>
+</div>
+</main>
+</div>
 <script>
-
-  // =====================================
-  // اتصال Supabase
-  // =====================================
-
-  const SUPABASE_URL =
-    "https://ydgfjupryhuiyriaxvin.supabase.co";
-
-  const SUPABASE_KEY =
-    "sb_publishable__hlPVmThO6PDb-_LSvMzWw_uAeHKMxs";
-
-
-  const supabaseClient =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
-
-
-  // =====================================
-  // احراز هویت واقعی
-  // =====================================
-  let currentUser = null;
-  let currentRole = "user";
-
-  async function requireSession() {
-    const { data: { session }, error } = await supabaseClient.auth.getSession();
-    if (error || !session) {
-      localStorage.removeItem("peyvand_name");
-      localStorage.removeItem("peyvand_employee");
-      localStorage.removeItem("peyvand_user_id");
-      window.location.replace("index.html");
-      return false;
-    }
-    currentUser = session.user;
-
-    const { data: employee, error: employeeError } = await supabaseClient
-      .from("peyvand_employees")
-      .select("full_name,employee_number,email,is_active")
-      .eq("user_id", currentUser.id)
-      .maybeSingle();
-
-    if (employeeError || !employee || !employee.is_active) {
-      await supabaseClient.auth.signOut();
-      localStorage.removeItem("peyvand_name");
-      localStorage.removeItem("peyvand_employee");
-      localStorage.removeItem("peyvand_user_id");
-      alert("دسترسی این حساب غیرفعال شده است.");
-      window.location.replace("index.html");
-      return false;
-    }
-
-    localStorage.setItem("peyvand_name", employee.full_name || "");
-    localStorage.setItem("peyvand_employee", employee.employee_number || "");
-    localStorage.setItem("peyvand_user_id", currentUser.id);
-
-    const { data: roleData } = await supabaseClient
-      .from("peyvand_user_roles")
-      .select("role")
-      .eq("user_id", currentUser.id)
-      .maybeSingle();
-
-    currentRole = roleData?.role || "user";
-    return true;
-  }
-
-  // =====================================
-  // اطلاعات کاربر
-  // =====================================
-
-  const userName =
-    localStorage.getItem("peyvand_name")
-    || "کاربر";
-
-
-  const employeeNumber =
-    localStorage.getItem("peyvand_employee")
-    || "بدون شماره پرسنلی";
-
-
-  document.getElementById(
-    "userName"
-  ).textContent = userName;
-
-
-  document.getElementById(
-    "employeeNumber"
-  ).textContent =
-    "پرسنلی: " + employeeNumber;
-
-  document.getElementById("logoutButton").addEventListener("click", async function () {
-    this.disabled = true;
-    this.textContent = "در حال خروج...";
-    await supabaseClient.auth.signOut();
-    localStorage.removeItem("peyvand_name");
-    localStorage.removeItem("peyvand_employee");
-    localStorage.removeItem("peyvand_user_id");
-    window.location.replace("index.html");
-  });
-
-  document.getElementById("adminButton").addEventListener("click", function () {
-    window.location.href = "admin.html";
-  });
-
-
-  const messagesBox =
-    document.getElementById("messages");
-
-
-  const messageInput =
-    document.getElementById("messageInput");
-
-
-  const sendButton =
-    document.getElementById("sendButton");
-
-
-  const connectionStatus =
-    document.getElementById(
-      "connectionStatus"
-    );
-
-
-  // =====================================
-  // جلوگیری از HTML خطرناک
-  // =====================================
-
-  function escapeHtml(text) {
-
-    const div =
-      document.createElement("div");
-
-    div.textContent = text;
-
-    return div.innerHTML;
-  }
-
-
-  // =====================================
-  // نمایش پیام
-  // =====================================
-
-  function showMessage(message) {
-
-    // اگر پیام قبلی در صفحه وجود دارد،
-    // دوباره همان پیام را نمایش نده
-
-    if (
-      document.querySelector(
-        '[data-message-id="' +
-        message.id +
-        '"]'
-      )
-    ) {
-      return;
-    }
-
-
-    const empty =
-      messagesBox.querySelector(".empty");
-
-    if (empty) {
-      empty.remove();
-    }
-
-
-    const div =
-      document.createElement("div");
-
-
-    div.className = "message";
-
-
-    div.setAttribute(
-      "data-message-id",
-      message.id
-    );
-
-
-    if (
-      message.employee === employeeNumber
-    ) {
-      div.classList.add("mine");
-    }
-
-
-    const time =
-      new Date(
-        message.created_at
-      ).toLocaleTimeString(
-        "fa-IR",
-        {
-          hour: "2-digit",
-          minute: "2-digit"
-        }
-      );
-
-
-    div.innerHTML = `
-
-      <div class="message-name">
-        ${escapeHtml(message.name)}
-      </div>
-
-      <div class="message-text">
-        ${escapeHtml(message.message)}
-      </div>
-
-      <div class="message-time">
-        ${time}
-      </div>
-
-    `;
-
-
-    messagesBox.appendChild(div);
-
-
-    messagesBox.scrollTop =
-      messagesBox.scrollHeight;
-  }
-
-
-  // =====================================
-  // دریافت پیام‌های قبلی
-  // =====================================
-
-  async function loadMessages() {
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .from("peyvand_messages")
-        .select("*")
-        .eq("room", "general")
-        .order(
-          "created_at",
-          {
-            ascending: true
-          }
-        );
-
-
-    if (error) {
-
-      console.error(
-        "LOAD ERROR:",
-        error
-      );
-
-      messagesBox.innerHTML = `
-        <div class="empty">
-          خطا در دریافت پیام‌ها
-        </div>
-      `;
-
-      return;
-    }
-
-
-    messagesBox.innerHTML = "";
-
-
-    if (
-      !data ||
-      data.length === 0
-    ) {
-
-      messagesBox.innerHTML = `
-        <div class="empty">
-          هنوز پیامی ارسال نشده است.
-        </div>
-      `;
-
-      return;
-    }
-
-
-    data.forEach(
-      showMessage
-    );
-
-  }
-
-
-  // =====================================
-  // ارسال پیام
-  // =====================================
-
-  async function sendMessage() {
-
-    const text =
-      messageInput.value.trim();
-
-
-    if (!text) {
-      return;
-    }
-
-
-    sendButton.disabled = true;
-
-
-    const newMessage = {
-
-      room: "general",
-
-      name: userName,
-
-      employee: employeeNumber,
-
-      message: text
-
-    };
-
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .from("peyvand_messages")
-        .insert(newMessage)
-        .select()
-        .single();
-
-
-    if (error) {
-
-      console.error(
-        "SEND ERROR:",
-        error
-      );
-
-      alert(
-        "پیام ارسال نشد:\n" +
-        error.message
-      );
-
-      sendButton.disabled = false;
-
-      return;
-    }
-
-
-    // مهم:
-    // پیام بلافاصله روی صفحه نمایش داده می‌شود.
-    // بنابراین حتی اگر Realtime تأخیر داشته باشد
-    // کاربر پیام خودش را می‌بیند.
-
-    if (data) {
-      showMessage(data);
-    }
-
-
-    messageInput.value = "";
-
-    messageInput.focus();
-
-
-    sendButton.disabled = false;
-
-  }
-
-
-  // =====================================
-  // دکمه ارسال
-  // =====================================
-
-  sendButton.addEventListener(
-    "click",
-    sendMessage
-  );
-
-
-  // =====================================
-  // ارسال با Enter
-  // =====================================
-
-  messageInput.addEventListener(
-    "keydown",
-    function(event) {
-
-      if (
-        event.key === "Enter"
-      ) {
-
-        event.preventDefault();
-
-        sendMessage();
-
-      }
-
-    }
-  );
-
-
-  // =====================================
-  // Realtime
-  // =====================================
-
-  const channel =
-    supabaseClient
-      .channel(
-        "peyvand-live-chat"
-      )
-
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "peyvand_messages",
-          filter: "room=eq.general"
-        },
-
-        function(payload) {
-
-          console.log(
-            "REALTIME:",
-            payload
-          );
-
-          showMessage(
-            payload.new
-          );
-
-        }
-      )
-
-      .subscribe(
-        function(status) {
-
-          console.log(
-            "REALTIME STATUS:",
-            status
-          );
-
-
-          if (
-            status === "SUBSCRIBED"
-          ) {
-
-            connectionStatus.textContent =
-              "● اتصال زنده برقرار است";
-
-            connectionStatus.style.color =
-              "#198754";
-
-          } else {
-
-            connectionStatus.textContent =
-              "● در حال اتصال...";
-
-            connectionStatus.style.color =
-              "#b7791f";
-
-          }
-
-        }
-      );
-
-
-  // =====================================
-  // شروع
-  // =====================================
-  (async function startApp() {
-    const ok = await requireSession();
-    if (!ok) return;
-
-    if (currentRole === "owner" || currentRole === "admin") {
-      document.getElementById("adminButton").style.display = "inline-block";
-    }
-
-    await loadMessages();
-
-    // اگر کاربر توسط مدیر مسدود شد، حداکثر ظرف یک دقیقه خارج می‌شود.
-    setInterval(async function () {
-      const { data: employee } = await supabaseClient
-        .from("peyvand_employees")
-        .select("is_active")
-        .eq("user_id", currentUser.id)
-        .maybeSingle();
-
-      if (!employee || !employee.is_active) {
-        await supabaseClient.auth.signOut();
-        localStorage.clear();
-        window.location.replace("index.html");
-      }
-    }, 60000);
-  })();
-
-  supabaseClient.auth.onAuthStateChange(function (event, session) {
-    if (event === "SIGNED_OUT" || !session) {
-      localStorage.removeItem("peyvand_name");
-      localStorage.removeItem("peyvand_employee");
-      localStorage.removeItem("peyvand_user_id");
-      if (!window.location.pathname.endsWith("index.html")) {
-        window.location.replace("index.html");
-      }
-    }
-  });
-
+const SUPABASE_URL="https://ydgfjupryhuiyriaxvin.supabase.co";
+const SUPABASE_KEY="sb_publishable__hlPVmThO6PDb-_LSvMzWw_uAeHKMxs";
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let currentUser=null;
+let currentRole="user";
+
+async function requireSession(){
+ const {data:{session},error}=await supabaseClient.auth.getSession();
+ if(error||!session){
+  localStorage.removeItem("peyvand_name");localStorage.removeItem("peyvand_employee");localStorage.removeItem("peyvand_user_id");
+  window.location.replace("index.html");return false;
+ }
+ currentUser=session.user;
+ const {data:employee,error:employeeError}=await supabaseClient.from("peyvand_employees").select("full_name,employee_number,email,is_active").eq("user_id",currentUser.id).maybeSingle();
+ if(employeeError||!employee||!employee.is_active){
+  await supabaseClient.auth.signOut();
+  localStorage.removeItem("peyvand_name");localStorage.removeItem("peyvand_employee");localStorage.removeItem("peyvand_user_id");
+  alert("دسترسی این حساب غیرفعال شده است.");
+  window.location.replace("index.html");return false;
+ }
+ localStorage.setItem("peyvand_name",employee.full_name||"");
+ localStorage.setItem("peyvand_employee",employee.employee_number||"");
+ localStorage.setItem("peyvand_user_id",currentUser.id);
+ const {data:roleData}=await supabaseClient.from("peyvand_user_roles").select("role").eq("user_id",currentUser.id).maybeSingle();
+ currentRole=roleData?.role||"user";
+ return true;
+}
+
+const userName=localStorage.getItem("peyvand_name")||"کاربر";
+const employeeNumber=localStorage.getItem("peyvand_employee")||"بدون شماره پرسنلی";
+document.getElementById("userName").textContent=userName;
+document.getElementById("employeeNumber").textContent="پرسنلی: "+employeeNumber;
+
+document.getElementById("logoutButton").addEventListener("click",async function(){
+ this.disabled=true;this.textContent="در حال خروج...";
+ await supabaseClient.auth.signOut();
+ localStorage.removeItem("peyvand_name");localStorage.removeItem("peyvand_employee");localStorage.removeItem("peyvand_user_id");
+ window.location.replace("index.html");
+});
+document.getElementById("adminButton").addEventListener("click",function(){window.location.href="admin.html"});
+
+const messagesBox=document.getElementById("messages");
+const messageInput=document.getElementById("messageInput");
+const sendButton=document.getElementById("sendButton");
+const connectionStatus=document.getElementById("connectionStatus");
+
+function escapeHtml(text){const div=document.createElement("div");div.textContent=text;return div.innerHTML}
+
+function showMessage(message){
+ if(document.querySelector('[data-message-id="'+message.id+'"]'))return;
+ const empty=messagesBox.querySelector(".empty");if(empty)empty.remove();
+ const div=document.createElement("div");div.className="message";div.setAttribute("data-message-id",message.id);
+ if(message.employee===employeeNumber)div.classList.add("mine");
+ const time=new Date(message.created_at).toLocaleTimeString("fa-IR",{hour:"2-digit",minute:"2-digit"});
+ div.innerHTML='<div class="message-name">'+escapeHtml(message.name)+'</div><div class="message-text">'+escapeHtml(message.message)+'</div><div class="message-time">'+time+"</div>";
+ messagesBox.appendChild(div);messagesBox.scrollTop=messagesBox.scrollHeight;
+}
+
+async function loadMessages(){
+ const {data,error}=await supabaseClient.from("peyvand_messages").select("*").eq("room","general").order("created_at",{ascending:true});
+ if(error){console.error("LOAD ERROR:",error);messagesBox.innerHTML='<div class="empty">خطا در دریافت پیام‌ها</div>';return}
+ messagesBox.innerHTML="";
+ if(!data||data.length===0){messagesBox.innerHTML='<div class="empty">هنوز پیامی ارسال نشده است.</div>';return}
+ data.forEach(showMessage);
+}
+
+async function sendMessage(){
+ const text=messageInput.value.trim();if(!text)return;
+ sendButton.disabled=true;
+ const newMessage={room:"general",name:userName,employee:employeeNumber,message:text};
+ const {data,error}=await supabaseClient.from("peyvand_messages").insert(newMessage).select().single();
+ if(error){console.error("SEND ERROR:",error);alert("پیام ارسال نشد:\n"+error.message);sendButton.disabled=false;return}
+ if(data)showMessage(data);
+ messageInput.value="";messageInput.focus();sendButton.disabled=false;
+}
+
+sendButton.addEventListener("click",sendMessage);
+messageInput.addEventListener("keydown",function(event){if(event.key==="Enter"){event.preventDefault();sendMessage()}});
+
+const channel=supabaseClient.channel("peyvand-live-chat").on("postgres_changes",{event:"INSERT",schema:"public",table:"peyvand_messages",filter:"room=eq.general"},function(payload){
+ console.log("REALTIME:",payload);showMessage(payload.new);
+}).subscribe(function(status){
+ console.log("REALTIME STATUS:",status);
+ if(status==="SUBSCRIBED"){connectionStatus.textContent="● اتصال زنده برقرار است";connectionStatus.style.color="#198754"}
+ else{connectionStatus.textContent="● در حال اتصال...";connectionStatus.style.color="#b7791f"}
+});
+
+(async function startApp(){
+ const ok=await requireSession();if(!ok)return;
+ if(currentRole==="owner"||currentRole==="admin")document.getElementById("adminButton").style.display="block";
+ await loadMessages();
+ setInterval(async function(){
+  const {data:employee}=await supabaseClient.from("peyvand_employees").select("is_active").eq("user_id",currentUser.id).maybeSingle();
+  if(!employee||!employee.is_active){await supabaseClient.auth.signOut();localStorage.clear();window.location.replace("index.html")}
+ },60000);
+})();
+
+supabaseClient.auth.onAuthStateChange(function(event,session){
+ if(event==="SIGNED_OUT"||!session){
+  localStorage.removeItem("peyvand_name");localStorage.removeItem("peyvand_employee");localStorage.removeItem("peyvand_user_id");
+  if(!window.location.pathname.endsWith("index.html"))window.location.replace("index.html");
+ }
+});
 </script>
-
 </body>
 </html>
-```
