@@ -254,7 +254,9 @@ form.addEventListener("submit",async event=>{
     : {email:loginCredential,password};
   const {data:authData,error:authError}=await supabaseClient.auth.signInWithPassword(authPayload);
   if(authError){
-    showError(isPhone?"شماره همراه یا رمز عبور صحیح نیست.":"ایمیل یا رمز عبور صحیح نیست.");
+    const detail = authError.message || "خطای نامشخص در احراز هویت";
+    showError("خطای ورود: " + detail);
+    console.error("Supabase signInWithPassword error:", authError);
     loginButton.disabled=false; loginButton.textContent="ورود به پیوند"; return;
   }
 
