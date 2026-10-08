@@ -102,9 +102,6 @@ async function requireSession(){
  return true;
 }
 
-let userName="کاربر";
-let employeeNumber="بدون شماره پرسنلی";
-
 document.getElementById("logoutButton").addEventListener("click",async function(){
  this.disabled=true;this.textContent="در حال خروج...";
  await supabaseClient.auth.signOut();
