@@ -1,1 +1,213 @@
 
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>پیوند | پیام‌رسان همکاران</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Tahoma, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #e9f7ef, #f7fbf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #24352c;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 430px;
+      padding: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.96);
+      border-radius: 28px;
+      padding: 35px 30px;
+      box-shadow: 0 15px 45px rgba(40,100,65,0.12);
+      text-align: center;
+    }
+
+    .logo {
+      width: 82px;
+      height: 82px;
+      margin: 0 auto 18px;
+      border-radius: 24px;
+      background: #2f8f5b;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+      font-weight: bold;
+      box-shadow: 0 10px 25px rgba(47,143,91,0.25);
+    }
+
+    h1 {
+      font-size: 32px;
+      color: #26784b;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #718078;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    .input-group {
+      text-align: right;
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #405048;
+    }
+
+    input {
+      width: 100%;
+      height: 52px;
+      border: 1px solid #dce8e0;
+      border-radius: 14px;
+      padding: 0 16px;
+      font-size: 15px;
+      outline: none;
+      background: #f9fcfa;
+      transition: 0.2s;
+    }
+
+    input:focus {
+      border-color: #48a66d;
+      box-shadow: 0 0 0 3px rgba(72,166,109,0.10);
+      background: white;
+    }
+
+    button {
+      width: 100%;
+      height: 54px;
+      border: none;
+      border-radius: 15px;
+      background: #2f8f5b;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #26784b;
+      transform: translateY(-1px);
+    }
+
+    .security {
+      margin-top: 24px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #f0f8f3;
+      color: #64806e;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .footer {
+      margin-top: 22px;
+      color: #9aa9a0;
+      font-size: 11px;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 30px 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="card">
+
+      <div class="logo">پ</div>
+
+      <h1>پیوند</h1>
+
+      <div class="subtitle">
+        پیام‌رسان اختصاصی همکاران
+      </div>
+
+      <div class="input-group">
+        <label for="name">نام و نام خانوادگی</label>
+        <input
+          id="name"
+          type="text"
+          placeholder="مثلاً محمدحسین رافعی"
+          autocomplete="name">
+      </div>
+
+      <div class="input-group">
+        <label for="employee">شماره پرسنلی</label>
+        <input
+          id="employee"
+          type="text"
+          placeholder="شماره پرسنلی خود را وارد کنید"
+          inputmode="numeric">
+      </div>
+
+      <button onclick="login()">
+        ورود به پیوند
+      </button>
+
+      <div class="security">
+        🔒 ورود با هویت سازمانی همکاران<br>
+        ارتباطات داخلی و اختصاصی
+      </div>
+
+      <div class="footer">
+        سامانه پیام‌رسان «پیوند»
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function login() {
+
+      const name = document.getElementById("name").value.trim();
+      const employee = document.getElementById("employee").value.trim();
+
+      if (!name || !employee) {
+        alert("لطفاً نام و شماره پرسنلی را وارد کنید.");
+        return;
+      }
+
+      localStorage.setItem("peyvand_name", name);
+      localStorage.setItem("peyvand_employee", employee);
+
+      alert("ورود با موفقیت انجام شد.");
+
+      // مرحله بعد:
+      // انتقال به محیط پیام‌رسان
+    }
+  </script>
+
+</body>
+</html>
