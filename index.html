@@ -3,23 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>پیوند | پیام‌رسان همکاران</title>
 
   <style>
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
       font-family: Tahoma, Arial, sans-serif;
     }
 
     body {
+      margin: 0;
       min-height: 100vh;
-      background: linear-gradient(135deg, #e8f6ed, #f8fbf9);
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #e8f6ed, #f8fbf9);
       color: #26372e;
     }
 
@@ -30,32 +28,32 @@
     }
 
     .card {
-      background: rgba(255,255,255,0.97);
+      background: white;
       border-radius: 28px;
       padding: 38px 30px;
       text-align: center;
-      box-shadow: 0 18px 50px rgba(40, 100, 65, 0.13);
+      box-shadow: 0 18px 50px rgba(40,100,65,.13);
     }
 
     .logo {
       width: 84px;
       height: 84px;
-      margin: 0 auto 18px;
+      margin: auto;
+      margin-bottom: 18px;
       border-radius: 25px;
       background: #2f8f5b;
       color: white;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       font-size: 40px;
       font-weight: bold;
-      box-shadow: 0 10px 25px rgba(47,143,91,0.25);
     }
 
     h1 {
       color: #26784b;
       font-size: 32px;
-      margin-bottom: 8px;
+      margin: 0 0 8px;
     }
 
     .subtitle {
@@ -72,7 +70,6 @@
     label {
       display: block;
       margin-bottom: 8px;
-      color: #405048;
       font-size: 14px;
       font-weight: bold;
     }
@@ -86,20 +83,17 @@
       font-size: 15px;
       outline: none;
       background: #f9fcfa;
-      direction: rtl;
-      transition: 0.2s;
     }
 
     input:focus {
       border-color: #48a66d;
       background: white;
-      box-shadow: 0 0 0 3px rgba(72,166,109,0.10);
     }
 
     button {
       width: 100%;
       height: 54px;
-      border: none;
+      border: 0;
       border-radius: 15px;
       background: #2f8f5b;
       color: white;
@@ -107,16 +101,10 @@
       font-weight: bold;
       cursor: pointer;
       margin-top: 8px;
-      transition: 0.2s;
     }
 
     button:hover {
       background: #26784b;
-      transform: translateY(-1px);
-    }
-
-    button:active {
-      transform: translateY(0);
     }
 
     .security {
@@ -129,12 +117,6 @@
       line-height: 1.9;
     }
 
-    .footer {
-      margin-top: 22px;
-      color: #9aa9a0;
-      font-size: 11px;
-    }
-
     .error {
       display: none;
       margin-top: 15px;
@@ -145,75 +127,75 @@
       font-size: 12px;
     }
 
-    @media (max-width: 480px) {
-      .card {
-        padding: 30px 22px;
-      }
+    .footer {
+      margin-top: 22px;
+      color: #9aa9a0;
+      font-size: 11px;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <div class="card">
+  <div class="card">
 
-      <div class="logo">پ</div>
+    <div class="logo">پ</div>
 
-      <h1>پیوند</h1>
+    <h1>پیوند</h1>
 
-      <div class="subtitle">
-        پیام‌رسان اختصاصی همکاران
-      </div>
+    <div class="subtitle">
+      پیام‌رسان اختصاصی همکاران
+    </div>
 
-      <div class="input-group">
-        <label for="name">نام و نام خانوادگی</label>
+    <div class="input-group">
+      <label>نام و نام خانوادگی</label>
 
-        <input
-          id="name"
-          type="text"
-          placeholder="نام و نام خانوادگی"
-          autocomplete="name">
-      </div>
+      <input
+        id="name"
+        type="text"
+        placeholder="نام و نام خانوادگی">
+    </div>
 
-      <div class="input-group">
-        <label for="employee">شماره پرسنلی</label>
+    <div class="input-group">
+      <label>شماره پرسنلی</label>
 
-        <input
-          id="employee"
-          type="text"
-          placeholder="شماره پرسنلی"
-          inputmode="numeric"
-          autocomplete="off">
-      </div>
+      <input
+        id="employee"
+        type="text"
+        inputmode="numeric"
+        placeholder="شماره پرسنلی">
+    </div>
 
-      <button onclick="login()">
-        ورود به پیوند
-      </button>
+    <button id="loginButton" type="button">
+      ورود به پیوند
+    </button>
 
-      <div id="error" class="error">
-        لطفاً نام و شماره پرسنلی را وارد کنید.
-      </div>
+    <div id="error" class="error">
+      لطفاً نام و شماره پرسنلی را وارد کنید.
+    </div>
 
-      <div class="security">
-        🔒 ورود با هویت سازمانی همکاران
-        <br>
-        ارتباطات داخلی و اختصاصی
-      </div>
+    <div class="security">
+      🔒 ورود با هویت سازمانی همکاران
+      <br>
+      ارتباطات داخلی و اختصاصی
+    </div>
 
-      <div class="footer">
-        سامانه پیام‌رسان «پیوند»
-      </div>
-
+    <div class="footer">
+      سامانه پیام‌رسان «پیوند»
     </div>
 
   </div>
 
+</div>
 
-  <script>
 
-    function login() {
+<script>
+
+  document
+    .getElementById("loginButton")
+    .addEventListener("click", function () {
 
       const name =
         document.getElementById("name").value.trim();
@@ -224,8 +206,6 @@
       const error =
         document.getElementById("error");
 
-
-      // بررسی ورود
       if (!name || !employee) {
 
         error.style.display = "block";
@@ -233,11 +213,8 @@
         return;
       }
 
-
       error.style.display = "none";
 
-
-      // ذخیره مشخصات کاربر
       localStorage.setItem(
         "peyvand_name",
         name
@@ -248,25 +225,14 @@
         employee
       );
 
+      // انتقال قطعی به صفحه چت
+      window.location.assign(
+        "https://almasonyz-design.github.io/peyvand-messenger/chat.html"
+      );
 
-      // ورود به محیط چت
-      window.location.href = "chat.html";
-    }
+    });
 
-
-    // ورود با کلید Enter
-    document.addEventListener(
-      "keydown",
-      function(event) {
-
-        if (event.key === "Enter") {
-          login();
-        }
-
-      }
-    );
-
-  </script>
+</script>
 
 </body>
 </html>
