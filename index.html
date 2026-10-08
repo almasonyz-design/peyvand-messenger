@@ -229,6 +229,18 @@
     );
 
 
+  // اگر قبلاً وارد شده، از صفحه ورود عبور کن
+  (async function () {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) {
+      window.location.href = "chat.html";
+      return;
+    }
+    localStorage.removeItem("peyvand_name");
+    localStorage.removeItem("peyvand_employee");
+    localStorage.removeItem("peyvand_user_id");
+  })();
+
   // =====================================
   // عناصر صفحه
   // =====================================
