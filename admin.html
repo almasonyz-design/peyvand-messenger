@@ -15,7 +15,7 @@ button,select{border:0;border-radius:10px;padding:9px 12px;cursor:pointer}
 button{background:#2f7d57;color:white}.danger{background:#b83a3a}.muted{color:#667}.badge{padding:5px 9px;border-radius:20px;background:#e7f4ec;display:inline-block}
 table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #e5ece8;text-align:right}
 .hidden{display:none}.error{color:#b00020}.ok{color:#167447}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions{display:flex;gap:8px;flex-wrap:wrap}input,select{width:100%;box-sizing:border-box;border:1px solid #d9e5df;border-radius:10px;padding:10px;margin-top:7px;background:white}label{display:block;font-weight:bold;font-size:14px}
 </style>
 </head>
 <body>
@@ -25,6 +25,20 @@ table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px s
 </header>
 <main>
   <div id="status" class="card">در حال بررسی دسترسی...</div>
+
+
+  <section id="addUserPanel" class="card hidden">
+    <h2>➕ افزودن همکار</h2>
+    <p class="muted">فقط Owner می‌تواند حساب جدید بسازد.</p>
+    <div class="grid">
+      <div><label>نام و نام خانوادگی</label><input id="newFullName" type="text" placeholder="مثلاً محمد احمدی"></div>
+      <div><label>شماره پرسنلی</label><input id="newEmployeeNumber" type="text" placeholder="مثلاً 10002"></div>
+      <div><label>شماره همراه</label><input id="newPhone" type="tel" placeholder="09121234567" dir="ltr"></div>
+      <div><label>نقش</label><select id="newRole"><option value="user">کاربر عادی</option><option value="admin">Admin</option></select></div>
+    </div>
+    <div class="actions" style="margin-top:16px"><button id="createUserBtn">ساخت حساب</button></div>
+    <div id="createUserResult" style="margin-top:14px"></div>
+  </section>
 
   <section id="ownerPanel" class="card hidden">
     <h2>👑 مدیریت نقش‌ها</h2>
@@ -165,6 +179,35 @@ async function loadMessages(){
   });
 }
 
+
+async function createNewUser(){
+  const result=document.getElementById("createUserResult");
+  const btn=document.getElementById("createUserBtn");
+  const full_name=document.getElementById("newFullName").value.trim();
+  const employee_number=document.getElementById("newEmployeeNumber").value.trim();
+  const phone=document.getElementById("newPhone").value.trim();
+  const role=document.getElementById("newRole").value;
+  result.innerHTML="";
+  if(!full_name||!employee_number||!phone){result.innerHTML='<p class="error">نام، شماره پرسنلی و شماره همراه الزامی است.</p>';return;}
+  btn.disabled=true;btn.textContent="در حال ساخت حساب...";
+  try{
+    const {data:{session},error:sessionError}=await supabaseClient.auth.getSession();
+    if(sessionError||!session) throw new Error("نشست Owner معتبر نیست.");
+    const {data,error}=await supabaseClient.functions.invoke("create-peyvand-user",{body:{full_name,employee_number,phone,role}});
+    if(error) throw new Error(error.message||"ساخت حساب انجام نشد.");
+    if(!data?.success) throw new Error(data?.error||"ساخت حساب انجام نشد.");
+    result.innerHTML='<div class="card" style="margin:0;background:#eaf7ef"><strong class="ok">✅ حساب با موفقیت ساخته شد.</strong><p>نام: '+esc(data.full_name)+'</p><p>شماره پرسنلی: '+esc(data.employee_number)+'</p><p>شماره همراه: '+esc(data.phone)+'</p><p>نقش: '+esc(data.role==="admin"?"Admin":"کاربر عادی")+'</p><p><strong>🔑 رمز موقت: <span dir="ltr">'+esc(data.temporary_password)+'</span></strong></p><p class="muted">این رمز را فقط در اختیار صاحب حساب قرار بده.</p></div>';
+    document.getElementById("newFullName").value="";
+    document.getElementById("newEmployeeNumber").value="";
+    document.getElementById("newPhone").value="";
+    document.getElementById("newRole").value="user";
+    await loadUsers("owner");
+    await loadRoles();
+  }catch(e){result.innerHTML='<p class="error">❌ '+esc(e.message||"خطای ناشناخته")+'</p>';}
+  finally{btn.disabled=false;btn.textContent="ساخت حساب";}
+}
+document.getElementById("createUserBtn").onclick=createNewUser;
+
 async function loadRoles(){
   const {data,error}=await supabaseClient.from("peyvand_user_roles").select("id,user_id,role,created_at").order("created_at",{ascending:true});
   if(error){document.getElementById("rolesTable").innerHTML='<p class="error">'+esc(error.message)+'</p>';return;}
@@ -202,7 +245,7 @@ async function loadRoles(){
     if(role!=="owner"&&role!=="admin") throw new Error("دسترسی به پنل مدیریت ندارید.");
     document.getElementById("roleBadge").textContent=role==="owner"?"👑 Owner":"🛡️ Admin";
     statusBox.innerHTML='<span class="ok">دسترسی تأیید شد.</span>';
-    usersPanel.classList.remove("hidden"); messagesPanel.classList.remove("hidden");
+    usersPanel.classList.remove("hidden"); messagesPanel.classList.remove("hidden"); if(role==="owner") document.getElementById("addUserPanel").classList.remove("hidden");
     await loadUsers(role); await loadMessages();
     if(role==="owner"){ownerPanel.classList.remove("hidden"); await loadRoles();}
   }catch(e){showError(e.message||"خطا در بررسی دسترسی");}
