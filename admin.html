@@ -51,6 +51,8 @@ table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px s
     <div id="usersTable"></div>
   </section>
 
+  <section id="auditPanel" class="card hidden"><h2>🛡️ لاگ امنیتی</h2><p class="muted">فقط Owner می‌تواند رویدادهای امنیتی سیستم را مشاهده کند.</p><div id="auditTable"></div></section>
+
   <section id="messagesPanel" class="card hidden">
     <h2>💬 مدیریت پیام‌ها</h2>
     <div id="messagesTable"></div>
@@ -66,6 +68,7 @@ const statusBox=document.getElementById("status");
 const ownerPanel=document.getElementById("ownerPanel");
 const usersPanel=document.getElementById("usersPanel");
 const messagesPanel=document.getElementById("messagesPanel");
+const auditPanel=document.getElementById("auditPanel");
 
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
 function showError(msg){statusBox.innerHTML='<span class="error">'+esc(msg)+'</span>';}
@@ -164,6 +167,21 @@ async function loadUsers(role){
   });
 }
 
+async function loadAuditLogs(){
+  const box=document.getElementById("auditTable");
+  const {data,error}=await supabaseClient.from("peyvand_audit_logs")
+    .select("id,actor_user_id,target_user_id,target_id,action,details,created_at")
+    .order("created_at",{ascending:false}).limit(200);
+  if(error){box.innerHTML='<p class="error">'+esc(error.message)+'</p>';return;}
+  const rows=data||[];
+  let html='<table><tr><th>زمان</th><th>عملیات</th><th>شناسه هدف</th><th>جزئیات</th></tr>';
+  for(const r of rows){
+    html+='<tr><td>'+new Date(r.created_at).toLocaleString("fa-IR")+'</td><td>'+esc(r.action)+'</td><td dir="ltr">'+esc(r.target_id||"")+'</td><td><code>'+esc(JSON.stringify(r.details||{}))+'</code></td></tr>';
+  }
+  html+='</table>';
+  box.innerHTML=html;
+}
+
 async function loadMessages(){
   const {data,error}=await supabaseClient.from("peyvand_messages").select("id,name,employee,message,created_at").eq("room","general").order("created_at",{ascending:false}).limit(100);
   if(error){document.getElementById("messagesTable").innerHTML='<p class="error">'+esc(error.message)+'</p>';return;}
@@ -247,7 +265,7 @@ async function loadRoles(){
     statusBox.innerHTML='<span class="ok">دسترسی تأیید شد.</span>';
     usersPanel.classList.remove("hidden"); messagesPanel.classList.remove("hidden"); if(role==="owner") document.getElementById("addUserPanel").classList.remove("hidden");
     await loadUsers(role); await loadMessages();
-    if(role==="owner"){ownerPanel.classList.remove("hidden"); await loadRoles();}
+    if(role==="owner"){ownerPanel.classList.remove("hidden"); auditPanel.classList.remove("hidden"); await loadRoles(); await loadAuditLogs();}
   }catch(e){showError(e.message||"خطا در بررسی دسترسی");}
 })();
 
