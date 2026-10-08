@@ -95,18 +95,58 @@ async function loadUsers(role){
     .select("id,user_id,full_name,employee_number,email,is_active,created_at")
     .order("created_at",{ascending:false});
   if(error){document.getElementById("usersTable").innerHTML='<p class="error">'+esc(error.message)+'</p>';return;}
-  let html='<table><tr><th>نام</th><th>پرسنلی</th><th>ایمیل</th><th>وضعیت</th><th>عملیات</th></tr>';
+
+  const {data:roles,error:rolesError}=await supabaseClient
+    .from("peyvand_user_roles")
+    .select("user_id,role");
+  if(rolesError){document.getElementById("usersTable").innerHTML='<p class="error">'+esc(rolesError.message)+'</p>';return;}
+
+  const roleMap=new Map((roles||[]).map(r=>[r.user_id,r.role]));
+
+  let html='<table><tr><th>نام</th><th>پرسنلی</th><th>ایمیل</th><th>نقش</th><th>وضعیت</th><th>عملیات</th></tr>';
   for(const u of data||[]){
+    const targetRole=roleMap.get(u.user_id)||"user";
+    let action="";
+
+    if(role==="owner"){
+      action = targetRole==="owner"
+        ? '<span class="muted">مالک سیستم</span>'
+        : '<button data-toggle="'+esc(u.id)+'" data-active="'+u.is_active+'">'+(u.is_active?"مسدود کردن":"فعال کردن")+'</button>';
+    }else if(role==="admin"){
+      action = targetRole==="user"
+        ? '<button data-toggle="'+esc(u.id)+'" data-active="'+u.is_active+'">'+(u.is_active?"مسدود کردن":"فعال کردن")+'</button>'
+        : '<span class="muted">قابل مدیریت نیست</span>';
+    }
+
     html+='<tr><td>'+esc(u.full_name)+'</td><td>'+esc(u.employee_number)+'</td><td>'+esc(u.email)+'</td>'+
-      '<td><span class="badge">'+(u.is_active?"فعال":"مسدود")+'</span></td><td>'+
-      (role==="owner"||role==="admin" ? '<button data-toggle="'+esc(u.id)+'" data-active="'+u.is_active+'">'+(u.is_active?"مسدود کردن":"فعال کردن")+'</button>' : '')+
-      '</td></tr>';
+      '<td><span class="badge">'+esc(targetRole==="owner"?"Owner":targetRole==="admin"?"Admin":"User")+'</span></td>'+
+      '<td><span class="badge">'+(u.is_active?"فعال":"مسدود")+'</span></td><td>'+action+'</td></tr>';
   }
   html+='</table>'; document.getElementById("usersTable").innerHTML=html;
+
   document.querySelectorAll("[data-toggle]").forEach(b=>b.onclick=async()=>{
     const id=b.dataset.toggle, active=b.dataset.active==="true";
-    const {error}=await supabaseClient.from("peyvand_employees").update({is_active:!active}).eq("id",id);
-    if(error) alert(error.message); else loadUsers(role);
+    if(!confirm((active?"این حساب مسدود شود؟":"این حساب فعال شود؟"))) return;
+
+    const row=(data||[]).find(x=>String(x.id)===String(id));
+    if(!row) return;
+
+    const targetRole=roleMap.get(row.user_id)||"user";
+    if(role==="admin" && targetRole!=="user"){
+      alert("Admin فقط می‌تواند کاربران عادی را فعال یا مسدود کند.");
+      return;
+    }
+    if(role==="owner" && targetRole==="owner"){
+      alert("حساب Owner قابل مسدود کردن نیست.");
+      return;
+    }
+
+    const {error}=await supabaseClient.from("peyvand_employees")
+      .update({is_active:!active})
+      .eq("id",id);
+
+    if(error) alert("عملیات انجام نشد: "+error.message);
+    else await loadUsers(role);
   });
 }
 
@@ -133,17 +173,25 @@ async function loadRoles(){
   let html='<table><tr><th>کاربر</th><th>پرسنلی</th><th>نقش</th><th>عملیات</th></tr>';
   for(const r of data||[]){
     const e=map.get(r.user_id)||{};
+    const isOwner=r.role==="owner";
     html+='<tr><td>'+esc(e.full_name||"بدون مشخصات")+'</td><td>'+esc(e.employee_number||"")+'</td><td>'+
-      '<select data-role="'+r.id+'" data-user="'+r.user_id+'" data-old="'+r.role+'">'+
+      '<select data-role="'+r.id+'" data-user="'+r.user_id+'" data-old="'+r.role+'" '+(isOwner?"disabled":"")+'>'+
       '<option value="owner" '+(r.role==="owner"?"selected":"")+' >Owner</option>'+
       '<option value="admin" '+(r.role==="admin"?"selected":"")+'>Admin</option>'+
-      '<option value="user" '+(r.role==="user"?"selected":"")+'>User</option></select></td><td><button data-save="'+r.id+'">ذخیره نقش</button></td></tr>';
+      '<option value="user" '+(r.role==="user"?"selected":"")+'>User</option></select></td><td>'+
+      (isOwner ? '<span class="muted">مالک سیستم</span>' : '<button data-save="'+r.id+'">ذخیره نقش</button>')+
+      '</td></tr>';
   }
   html+='</table>'; document.getElementById("rolesTable").innerHTML=html;
   document.querySelectorAll("[data-save]").forEach(b=>b.onclick=async()=>{
     const id=b.dataset.save, s=document.querySelector('[data-role="'+id+'"]'), newRole=s.value, old=s.dataset.old;
-    if(old==="owner" && newRole!=="owner" && !confirm("نقش Owner تغییر کند؟")) {s.value=old;return;}
-    const {error}=await supabaseClient.from("peyvand_user_roles").update({role:newRole}).eq("id",id);
+    if(old==="owner"){s.value=old;return;}
+    if(newRole==="owner"){
+      alert("تغییر نقش به Owner از این بخش مجاز نیست؛ فقط یک Owner برای سیستم وجود دارد.");
+      s.value=old;
+      return;
+    }
+    const {error}=await supabaseClient.from("peyvand_user_roles").update({role:newRole}).eq("id",id).neq("role","owner");
     if(error) alert(error.message); else {alert("نقش ذخیره شد.");loadRoles();}
   });
 }
