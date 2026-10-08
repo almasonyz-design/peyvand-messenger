@@ -90,8 +90,12 @@ async function requireSession(){
   alert("دسترسی این حساب غیرفعال شده است.");
   window.location.replace("index.html");return false;
  }
- localStorage.setItem("peyvand_name",employee.full_name||"");
- localStorage.setItem("peyvand_employee",employee.employee_number||"");
+ userName=employee.full_name||"کاربر";
+ employeeNumber=employee.employee_number||"بدون شماره پرسنلی";
+ document.getElementById("userName").textContent=userName;
+ document.getElementById("employeeNumber").textContent="پرسنلی: "+employeeNumber;
+ localStorage.setItem("peyvand_name",userName);
+ localStorage.setItem("peyvand_employee",employeeNumber);
  localStorage.setItem("peyvand_user_id",currentUser.id);
  const {data:roleData}=await supabaseClient.from("peyvand_user_roles").select("role").eq("user_id",currentUser.id).maybeSingle();
  currentRole=roleData?.role||"user";
@@ -99,9 +103,8 @@ async function requireSession(){
 }
 
 const userName=localStorage.getItem("peyvand_name")||"کاربر";
-const employeeNumber=localStorage.getItem("peyvand_employee")||"بدون شماره پرسنلی";
-document.getElementById("userName").textContent=userName;
-document.getElementById("employeeNumber").textContent="پرسنلی: "+employeeNumber;
+let userName="کاربر";
+let employeeNumber="بدون شماره پرسنلی";
 
 document.getElementById("logoutButton").addEventListener("click",async function(){
  this.disabled=true;this.textContent="در حال خروج...";
@@ -139,7 +142,7 @@ async function loadMessages(){
 async function sendMessage(){
  const text=messageInput.value.trim();if(!text)return;
  sendButton.disabled=true;
- const newMessage={room:"general",name:userName,employee:employeeNumber,message:text};
+ const newMessage={room:"general",name:"",employee:"",message:text};
  const {data,error}=await supabaseClient.from("peyvand_messages").insert(newMessage).select().single();
  if(error){console.error("SEND ERROR:",error);alert("پیام ارسال نشد:\n"+error.message);sendButton.disabled=false;return}
  if(data)showMessage(data);
