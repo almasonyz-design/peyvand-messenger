@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -38,12 +39,15 @@ button:disabled{opacity:.6;cursor:not-allowed}
 hr{border:0;border-top:1px solid #e5eee9;margin:20px 0}
 </style>
 </head>
+
 <body>
 <div class="login-box">
+
   <div class="logo">پیوند</div>
   <div class="subtitle">پیام‌رسان اختصاصی همکاران</div>
 
   <form id="loginForm">
+
     <label for="name">نام و نام خانوادگی</label>
     <input id="name" type="text" placeholder="نام و نام خانوادگی" required>
 
@@ -51,263 +55,194 @@ hr{border:0;border-top:1px solid #e5eee9;margin:20px 0}
     <input id="employee" type="text" placeholder="شماره پرسنلی" required>
 
     <label for="phone">شماره همراه</label>
-    <input id="phone" type="text" inputmode="tel" autocomplete="username" placeholder="مثلاً 09121234567" required>
-    <div class="muted" style="margin-top:-10px;margin-bottom:16px">برای انتقال مالکیت، Owner فعلی موقتاً می‌تواند ایمیل حساب فعلی خود را نیز در این کادر وارد کند.</div>
+    <input
+      id="phone"
+      type="text"
+      inputmode="tel"
+      autocomplete="tel"
+      placeholder="مثلاً 09121234567"
+      required
+    >
+
+    <div class="muted" style="margin-top:-10px;margin-bottom:16px">
+      شماره همراه فقط برای تطبیق اطلاعات همکار استفاده می‌شود و نیازی به پیامک یا Twilio ندارد.
+    </div>
 
     <label for="password">رمز عبور</label>
     <input id="password" type="password" placeholder="رمز عبور" required>
 
     <button id="loginButton" type="submit">ورود به پیوند</button>
+
     <div id="errorBox" class="error"></div>
     <div id="successBox" class="success"></div>
+
   </form>
 
   <section id="ownerPanel" class="panel">
+
     <h3>👑 مدیریت مدیران</h3>
-    <div class="muted">فقط مالک سیستم می‌تواند مدیر اضافه یا حذف کند. حذف مدیر یعنی برگرداندن نقش او به «کاربر عادی»؛ حساب او حذف نمی‌شود.</div>
+
+    <div class="muted">
+      فقط مالک سیستم می‌تواند مدیر اضافه یا حذف کند.
+      حذف مدیر یعنی برگرداندن نقش او به «کاربر عادی»؛ حساب او حذف نمی‌شود.
+    </div>
+
     <div id="adminsList"></div>
+
     <hr>
+
     <label for="userSelect">انتخاب کاربر برای مدیر شدن</label>
     <select id="userSelect"></select>
-    <button id="addAdminBtn" type="button">➕ معرفی به عنوان مدیر</button>
-    <button id="enterBtn" class="secondary" type="button">ورود به پیوند</button>
-    <button id="logoutBtn" class="secondary" type="button">🚪 خروج از حساب</button>
+
+    <button id="addAdminBtn" type="button">
+      ➕ معرفی به عنوان مدیر
+    </button>
+
+    <button id="enterBtn" class="secondary" type="button">
+      ورود به پیوند
+    </button>
+
+    <button id="logoutBtn" class="secondary" type="button">
+      🚪 خروج از حساب
+    </button>
+
   </section>
 
-  <div class="info">فعلاً ورود با شماره همراه انجام می‌شود؛ ورود پیامکی در مرحله بعد اضافه خواهد شد.</div>
+  <div class="info">
+    ورود با شماره همراه، بدون SMS و بدون نیاز به Twilio انجام می‌شود.
+  </div>
+
 </div>
 
 <script>
-const SUPABASE_URL="https://ydgfjupryhuiyriaxvin.supabase.co";
-const SUPABASE_KEY="sb_publishable__hlPVmThO6PDb-_LSvMzWw_uAeHKMxs";
-const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-const form=document.getElementById("loginForm");
-const loginButton=document.getElementById("loginButton");
-const errorBox=document.getElementById("errorBox");
-const successBox=document.getElementById("successBox");
-const ownerPanel=document.getElementById("ownerPanel");
-const adminsList=document.getElementById("adminsList");
-const userSelect=document.getElementById("userSelect");
-const addAdminBtn=document.getElementById("addAdminBtn");
-const enterBtn=document.getElementById("enterBtn");
-const logoutBtn=document.getElementById("logoutBtn");
+const SUPABASE_URL =
+  "https://ydgfjupryhuiyriaxvin.supabase.co";
 
-let currentUser=null;
-let currentRole=null;
-let employeeCache=[];
+const SUPABASE_KEY =
+  "sb_publishable__hlPVmThO6PDb-_LSvMzWw_uAeHKMxs";
 
-function showError(message){errorBox.textContent=message;errorBox.style.display="block";successBox.style.display="none"}
-function showSuccess(message){successBox.textContent=message;successBox.style.display="block";errorBox.style.display="none"}
-function hideMessages(){errorBox.style.display="none";successBox.style.display="none"}
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
-async function loadOwnerPanel(){
-  ownerPanel.style.display="block";
-  adminsList.innerHTML="<div class='muted'>در حال بارگذاری...</div>";
 
-  const {data:employees,error:e1}=await supabaseClient
-    .from("peyvand_employees")
-    .select("id,user_id,full_name,employee_number,email,is_active")
-    .order("full_name",{ascending:true});
+const form =
+  document.getElementById("loginForm");
 
-  if(e1) throw e1;
+const loginButton =
+  document.getElementById("loginButton");
 
-  const {data:roles,error:e2}=await supabaseClient
-    .from("peyvand_user_roles")
-    .select("user_id,role");
+const errorBox =
+  document.getElementById("errorBox");
 
-  if(e2) throw e2;
+const successBox =
+  document.getElementById("successBox");
 
-  const roleMap=new Map((roles||[]).map(r=>[r.user_id,r.role]));
-  employeeCache=employees||[];
+const ownerPanel =
+  document.getElementById("ownerPanel");
 
-  const admins=employeeCache.filter(e=>roleMap.get(e.user_id)==="admin");
+const adminsList =
+  document.getElementById("adminsList");
 
-  adminsList.innerHTML=admins.length
-    ? admins.map(e=>`
-      <div class="user-row">
-        <div class="user-info">
-          <div class="user-name">${escapeHtml(e.full_name)} <span class="badge">مدیر</span></div>
-          <div class="user-meta">پرسنلی: ${escapeHtml(e.employee_number)} | ${escapeHtml(e.email)}</div>
-        </div>
-        <div class="user-actions">
-          <button class="danger" onclick="removeAdmin('${e.user_id}')">حذف مدیر</button>
-        </div>
-      </div>`).join("")
-    : "<div class='muted'>هنوز مدیری غیر از مالک ثبت نشده است.</div>";
+const userSelect =
+  document.getElementById("userSelect");
 
-  const candidates=employeeCache.filter(e=>roleMap.get(e.user_id)!=="owner" && roleMap.get(e.user_id)!=="admin" && e.is_active);
+const addAdminBtn =
+  document.getElementById("addAdminBtn");
 
-  userSelect.innerHTML=candidates.length
-    ? candidates.map(e=>`<option value="${e.user_id}">${escapeHtml(e.full_name)} — ${escapeHtml(e.employee_number)}</option>`).join("")
-    : "<option value=''>کاربر عادی فعالی وجود ندارد</option>";
+const enterBtn =
+  document.getElementById("enterBtn");
 
-  addAdminBtn.disabled=!candidates.length;
+const logoutBtn =
+  document.getElementById("logoutBtn");
+
+
+let currentUser = null;
+let currentRole = null;
+let employeeCache = [];
+
+
+/* =========================
+   ابزارها
+========================= */
+
+function showError(message){
+
+  errorBox.textContent = message;
+  errorBox.style.display = "block";
+  successBox.style.display = "none";
+
 }
+
+
+function showSuccess(message){
+
+  successBox.textContent = message;
+  successBox.style.display = "block";
+  errorBox.style.display = "none";
+
+}
+
+
+function hideMessages(){
+
+  errorBox.style.display = "none";
+  successBox.style.display = "none";
+
+}
+
 
 function escapeHtml(value){
-  return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
+
+  return String(value ?? "")
+    .replace(
+      /[&<>"']/g,
+      c => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+      }[c])
+    );
+
 }
 
-window.removeAdmin=async function(userId){
-  if(!currentUser || currentRole!=="owner") return;
-  if(!confirm("این کاربر از مدیریت حذف و به کاربر عادی تبدیل شود؟")) return;
 
-  const {error}=await supabaseClient
-    .from("peyvand_user_roles")
-    .update({role:"user"})
-    .eq("user_id",userId)
-    .neq("role","owner");
+/* =========================
+   تبدیل شماره ایران
+========================= */
 
-  if(error){showError("حذف مدیر انجام نشد: "+error.message);return}
-  showSuccess("مدیر با موفقیت حذف شد.");
-  await loadOwnerPanel();
-};
+function normalizeIranPhone(phone){
 
-addAdminBtn.addEventListener("click",async()=>{
-  const userId=userSelect.value;
-  if(!userId || !currentUser || currentRole!=="owner") return;
+  let p = String(phone || "")
+    .replace(/\D/g,"");
 
-  addAdminBtn.disabled=true;
-  const {data:existing}=await supabaseClient
-    .from("peyvand_user_roles")
-    .select("user_id")
-    .eq("user_id",userId)
-    .maybeSingle();
-
-  let error=null;
-  if(existing){
-    ({error}=await supabaseClient.from("peyvand_user_roles").update({role:"admin"}).eq("user_id",userId));
-  }else{
-    ({error}=await supabaseClient.from("peyvand_user_roles").insert({user_id:userId,role:"admin"}));
+  if(p.startsWith("0098")){
+    p = p.slice(2);
   }
 
-  if(error) showError("معرفی مدیر انجام نشد: "+error.message);
-  else {showSuccess("کاربر با موفقیت به عنوان مدیر معرفی شد.");await loadOwnerPanel();}
-  addAdminBtn.disabled=false;
-});
-
-enterBtn.addEventListener("click",()=>window.location.href="chat.html");
-
-logoutBtn.addEventListener("click",async()=>{
-  await supabaseClient.auth.signOut();
-  currentUser=null; currentRole=null;
-  ownerPanel.style.display="none";
-  form.style.display="block";
-  hideMessages();
-  form.reset();
-});
-
-(async()=>{
-  const {data:{session}}=await supabaseClient.auth.getSession();
-  if(session){
-    currentUser=session.user;
-    form.style.display="none";
-    try{
-      const {data:emp,error:ee}=await supabaseClient.from("peyvand_employees")
-        .select("id,user_id,full_name,employee_number,email,is_active")
-        .eq("user_id",session.user.id).maybeSingle();
-      if(ee||!emp||!emp.is_active) throw new Error("حساب شما فعال نیست.");
-      const {data:role,error:re}=await supabaseClient.from("peyvand_user_roles")
-        .select("role").eq("user_id",session.user.id).maybeSingle();
-      if(re||!role) throw new Error("برای این حساب نقشی ثبت نشده است.");
-      currentRole=role.role;
-      if(currentRole==="owner") await loadOwnerPanel();
-      else window.location.href="chat.html";
-    }catch(e){
-      await supabaseClient.auth.signOut();
-      form.style.display="block";
-      showError(e.message||"خطا در بررسی حساب.");
-    }
-  }else{
-    localStorage.removeItem("peyvand_name");
-    localStorage.removeItem("peyvand_employee");
-    localStorage.removeItem("peyvand_user_id");
-  }
-})();
-
-form.addEventListener("submit",async event=>{
-  event.preventDefault();
-  hideMessages();
-  const name=document.getElementById("name").value.trim();
-  const employee=document.getElementById("employee").value.trim();
-  const phone=document.getElementById("phone").value.trim();
-  const password=document.getElementById("password").value;
-  const isPhone=!phone.includes("@");
-  let loginCredential=phone;
-  if(isPhone){
-    let p=phone.replace(/[^\d+]/g,"");
-    if(p.startsWith("00")) p="+"+p.slice(2);
-    if(p.startsWith("09")&&p.length===11) p="+98"+p.slice(1);
-    else if(p.startsWith("989")&&p.length===12) p="+"+p;
-    loginCredential=p;
-  } else {
-    loginCredential=phone.trim().toLowerCase();
-  }
-  if(!name||!employee||!phone||!password){showError("لطفاً همه اطلاعات را وارد کنید.");return}
-
-  loginButton.disabled=true;
-  loginButton.textContent="در حال بررسی...";
-
-  const authPayload=isPhone
-    ? {phone:loginCredential,password}
-    : {email:loginCredential,password};
-  const {data:authData,error:authError}=await supabaseClient.auth.signInWithPassword(authPayload);
-  if(authError){
-    const detail = authError.message || "خطای نامشخص در احراز هویت";
-    showError("خطای ورود: " + detail);
-    console.error("Supabase signInWithPassword error:", authError);
-    loginButton.disabled=false; loginButton.textContent="ورود به پیوند"; return;
+  if(p.startsWith("98")){
+    return "+" + p;
   }
 
-  const {data:employeeData,error:employeeError}=await supabaseClient
-    .from("peyvand_employees")
-    .select("id,user_id,full_name,employee_number,email,phone,is_active")
-    .eq("user_id",authData.user.id).eq("employee_number",employee).eq("is_active",true).maybeSingle();
-
-  if(employeeError||!employeeData){
-    await supabaseClient.auth.signOut();
-    showError(employeeError?"خطا در بررسی دسترسی همکار.":"این حساب یا شماره پرسنلی در فهرست همکاران ثبت نشده است.");
-    loginButton.disabled=false; loginButton.textContent="ورود به پیوند"; return;
+  if(p.startsWith("09") && p.length === 11){
+    return "+98" + p.slice(1);
   }
 
-  const credentialMatches=isPhone
-    ? employeeData.phone===loginCredential
-    : (employeeData.email||"").toLowerCase()===loginCredential;
-  if(!credentialMatches){
-    await supabaseClient.auth.signOut();
-    showError("شماره همراه/ایمیل با اطلاعات ثبت‌شده همکار مطابقت ندارد.");
-    loginButton.disabled=false; loginButton.textContent="ورود به پیوند"; return;
+  if(p.startsWith("9") && p.length === 10){
+    return "+98" + p;
   }
 
-  if(employeeData.full_name && employeeData.full_name!=="کاربر آزمایشی" && employeeData.full_name.trim()!==name){
-    await supabaseClient.auth.signOut();
-    showError("نام و نام خانوادگی با اطلاعات ثبت‌شده مطابقت ندارد.");
-    loginButton.disabled=false; loginButton.textContent="ورود به پیوند"; return;
-  }
+  return "";
 
-  const {data:roleData,error:roleError}=await supabaseClient.from("peyvand_user_roles").select("role").eq("user_id",authData.user.id).maybeSingle();
-  if(roleError||!roleData){
-    await supabaseClient.auth.signOut();
-    showError("برای این حساب نقش مدیریتی/کاربری ثبت نشده است.");
-    loginButton.disabled=false; loginButton.textContent="ورود به پیوند"; return;
-  }
+}
 
-  currentUser=authData.user;
-  currentRole=roleData.role;
-  localStorage.setItem("peyvand_name",employeeData.full_name||name);
-  localStorage.setItem("peyvand_employee",employeeData.employee_number);
-  localStorage.setItem("peyvand_user_id",authData.user.id);
 
-  if(currentRole==="owner"){
-    form.style.display="none";
-    showSuccess("ورود مالک سیستم موفق بود. از همین صفحه می‌توانید مدیرها را اضافه یا حذف کنید.");
-    await loadOwnerPanel();
-  }else{
-    showSuccess("ورود موفق بود؛ در حال ورود به پیوند...");
-    setTimeout(()=>window.location.href="chat.html",400);
-  }
-});
-</script>
-</body>
-</html>
+/* =========================
+   ایمیل داخلی Auth
+=========
+```
