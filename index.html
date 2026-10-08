@@ -240,8 +240,6 @@ form.addEventListener("submit",async event=>{
     if(p.startsWith("09")&&p.length===11) p="+98"+p.slice(1);
     else if(p.startsWith("989")&&p.length===12) p="+"+p;
     loginCredential=p;
-  }else{
-    loginCredential=credential.toLowerCase();
   }
   if(!name||!employee||!phone||!password){showError("لطفاً همه اطلاعات را وارد کنید.");return}
 
