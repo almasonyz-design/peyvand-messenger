@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>پیوند | پنل مدیریت</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+body{font-family:Tahoma,Arial,sans-serif;background:#f3f8f5;margin:0;color:#17352a}
+header{background:#2f7d57;color:white;padding:18px 24px;display:flex;justify-content:space-between;align-items:center}
+main{max-width:1200px;margin:24px auto;padding:0 16px}
+.card{background:white;border-radius:16px;padding:20px;margin-bottom:18px;box-shadow:0 5px 18px #00000012}
+h2{margin-top:0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+button,select{border:0;border-radius:10px;padding:9px 12px;cursor:pointer}
+button{background:#2f7d57;color:white}.danger{background:#b83a3a}.muted{color:#667}.badge{padding:5px 9px;border-radius:20px;background:#e7f4ec;display:inline-block}
+table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #e5ece8;text-align:right}
+.hidden{display:none}.error{color:#b00020}.ok{color:#167447}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<header>
+  <strong>🌿 پیوند — پنل مدیریت</strong>
+  <div><span id="roleBadge"></span> <button id="backBtn">بازگشت به چت</button></div>
+</header>
+<main>
+  <div id="status" class="card">در حال بررسی دسترسی...</div>
+
+  <section id="ownerPanel" class="card hidden">
+    <h2>👑 مدیریت نقش‌ها</h2>
+    <p class="muted">فقط Owner می‌تواند نقش کاربران را تغییر دهد.</p>
+    <div id="rolesTable"></div>
+  </section>
+
+  <section id="usersPanel" class="card hidden">
+    <h2>👥 مدیریت کاربران</h2>
+    <div id="usersTable"></div>
+  </section>
+
+  <section id="messagesPanel" class="card hidden">
+    <h2>💬 مدیریت پیام‌ها</h2>
+    <div id="messagesTable"></div>
+  </section>
+</main>
+
+<script>
+const SUPABASE_URL="https://ydgfjupryhuiyriaxvin.supabase.co";
+const SUPABASE_KEY="sb_publishable__hlPVmThO6PDb-_LSvMzWw_uAeHKMxs";
+const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+const statusBox=document.getElementById("status");
+const ownerPanel=document.getElementById("ownerPanel");
+const usersPanel=document.getElementById("usersPanel");
+const messagesPanel=document.getElementById("messagesPanel");
+
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+function showError(msg){statusBox.innerHTML='<span class="error">'+esc(msg)+'</span>';}
+
+document.getElementById("backBtn").onclick=()=>location.href="chat.html";
+
+async function getMyRole(){
+  const {data:{user},error:authError}=await supabaseClient.auth.getUser();
+  if(authError||!user) throw new Error("ابتدا باید وارد حساب پیوند شوید.");
+  const {data,error}=await supabaseClient.from("peyvand_user_roles").select("role").eq("user_id",user.id).maybeSingle();
+  if(error) throw error;
+  if(!data) throw new Error("برای این حساب نقشی ثبت نشده است.");
+  return {user,role:data.role};
+}
+
+async function loadUsers(role){
+  const {data,error}=await supabaseClient.from("peyvand_employees")
+    .select("id,user_id,full_name,employee_number,email,is_active,created_at")
+    .order("created_at",{ascending:false});
+  if(error){document.getElementById("usersTable").innerHTML='<p class="error">'+esc(error.message)+'</p>';return;}
+  let html='<table><tr><th>نام</th><th>پرسنلی</th><th>ایمیل</th><th>وضعیت</th><th>عملیات</th></tr>';
+  for(const u of data||[]){
+    html+='<tr><td>'+esc(u.full_name)+'</td><td>'+esc(u.employee_number)+'</td><td>'+esc(u.email)+'</td>'+
+      '<td><span class="badge">'+(u.is_active?"فعال":"مسدود")+'</span></td><td>'+
+      (role==="owner"||role==="admin" ? '<button data-toggle="'+esc(u.id)+'" data-active="'+u.is_active+'">'+(u.is_active?"مسدود کردن":"فعال کردن")+'</button>' : '')+
+      '</td></tr>';
+  }
+  html+='</table>'; document.getElementById("usersTable").innerHTML=html;
+  document.querySelectorAll("[data-toggle]").forEach(b=>b.onclick=async()=>{
+    const id=b.dataset.toggle, active=b.dataset.active==="true";
+    const {error}=await supabaseClient.from("peyvand_employees").update({is_active:!active}).eq("id",id);
+    if(error) alert(error.message); else loadUsers(role);
+  });
+}
+
+async function loadMessages(){
+  const {data,error}=await supabaseClient.from("peyvand_messages").select("id,name,employee,message,created_at").eq("room","general").order("created_at",{ascending:false}).limit(100);
+  if(error){document.getElementById("messagesTable").innerHTML='<p class="error">'+esc(error.message)+'</p>';return;}
+  let html='<table><tr><th>زمان</th><th>فرستنده</th><th>پرسنلی</th><th>پیام</th><th></th></tr>';
+  for(const m of data||[]){
+    html+='<tr><td>'+new Date(m.created_at).toLocaleString("fa-IR")+'</td><td>'+esc(m.name)+'</td><td>'+esc(m.employee)+'</td><td>'+esc(m.message)+'</td><td><button class="danger" data-delete="'+m.id+'">حذف</button></td></tr>';
+  }
+  html+='</table>'; document.getElementById("messagesTable").innerHTML=html;
+  document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=async()=>{
+    if(!confirm("این پیام حذف شود؟")) return;
+    const {error}=await supabaseClient.from("peyvand_messages").delete().eq("id",b.dataset.delete);
+    if(error) alert(error.message); else loadMessages();
+  });
+}
+
+async function loadRoles(){
+  const {data,error}=await supabaseClient.from("peyvand_user_roles").select("id,user_id,role,created_at").order("created_at",{ascending:true});
+  if(error){document.getElementById("rolesTable").innerHTML='<p class="error">'+esc(error.message)+'</p>';return;}
+  const {data:emps}=await supabaseClient.from("peyvand_employees").select("user_id,full_name,employee_number,email");
+  const map=new Map((emps||[]).map(e=>[e.user_id,e]));
+  let html='<table><tr><th>کاربر</th><th>پرسنلی</th><th>نقش</th><th>عملیات</th></tr>';
+  for(const r of data||[]){
+    const e=map.get(r.user_id)||{};
+    html+='<tr><td>'+esc(e.full_name||"بدون مشخصات")+'</td><td>'+esc(e.employee_number||"")+'</td><td>'+
+      '<select data-role="'+r.id+'" data-user="'+r.user_id+'" data-old="'+r.role+'">'+
+      '<option value="owner" '+(r.role==="owner"?"selected":"")+' >Owner</option>'+
+      '<option value="admin" '+(r.role==="admin"?"selected":"")+'>Admin</option>'+
+      '<option value="user" '+(r.role==="user"?"selected":"")+'>User</option></select></td><td><button data-save="'+r.id+'">ذخیره نقش</button></td></tr>';
+  }
+  html+='</table>'; document.getElementById("rolesTable").innerHTML=html;
+  document.querySelectorAll("[data-save]").forEach(b=>b.onclick=async()=>{
+    const id=b.dataset.save, s=document.querySelector('[data-role="'+id+'"]'), newRole=s.value, old=s.dataset.old;
+    if(old==="owner" && newRole!=="owner" && !confirm("نقش Owner تغییر کند؟")) {s.value=old;return;}
+    const {error}=await supabaseClient.from("peyvand_user_roles").update({role:newRole}).eq("id",id);
+    if(error) alert(error.message); else {alert("نقش ذخیره شد.");loadRoles();}
+  });
+}
+
+(async()=>{
+  try{
+    const {user,role}=await getMyRole();
+    if(role!=="owner"&&role!=="admin") throw new Error("دسترسی به پنل مدیریت ندارید.");
+    document.getElementById("roleBadge").textContent=role==="owner"?"👑 Owner":"🛡️ Admin";
+    statusBox.innerHTML='<span class="ok">دسترسی تأیید شد.</span>';
+    usersPanel.classList.remove("hidden"); messagesPanel.classList.remove("hidden");
+    await loadUsers(role); await loadMessages();
+    if(role==="owner"){ownerPanel.classList.remove("hidden"); await loadRoles();}
+  }catch(e){showError(e.message||"خطا در بررسی دسترسی");}
+})();
+</script>
+</body>
+</html>
