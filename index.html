@@ -51,7 +51,8 @@ hr{border:0;border-top:1px solid #e5eee9;margin:20px 0}
     <input id="employee" type="text" placeholder="شماره پرسنلی" required>
 
     <label for="phone">شماره همراه</label>
-    <input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="مثلاً 09121234567" required>
+    <input id="phone" type="text" inputmode="tel" autocomplete="username" placeholder="مثلاً 09121234567" required>
+    <div class="muted" style="margin-top:-10px;margin-bottom:16px">برای انتقال مالکیت، Owner فعلی موقتاً می‌تواند ایمیل حساب فعلی خود را نیز در این کادر وارد کند.</div>
 
     <label for="password">رمز عبور</label>
     <input id="password" type="password" placeholder="رمز عبور" required>
@@ -232,7 +233,7 @@ form.addEventListener("submit",async event=>{
   const employee=document.getElementById("employee").value.trim();
   const phone=document.getElementById("phone").value.trim();
   const password=document.getElementById("password").value;
-  const isPhone=true;
+  const isPhone=!phone.includes("@");
   let loginCredential=phone;
   if(isPhone){
     let p=phone.replace(/[^\d+]/g,"");
@@ -240,6 +241,8 @@ form.addEventListener("submit",async event=>{
     if(p.startsWith("09")&&p.length===11) p="+98"+p.slice(1);
     else if(p.startsWith("989")&&p.length===12) p="+"+p;
     loginCredential=p;
+  } else {
+    loginCredential=phone.trim().toLowerCase();
   }
   if(!name||!employee||!phone||!password){showError("لطفاً همه اطلاعات را وارد کنید.");return}
 
@@ -251,7 +254,7 @@ form.addEventListener("submit",async event=>{
     : {email:loginCredential,password};
   const {data:authData,error:authError}=await supabaseClient.auth.signInWithPassword(authPayload);
   if(authError){
-    showError("شماره همراه یا رمز عبور صحیح نیست.");
+    showError(isPhone?"شماره همراه یا رمز عبور صحیح نیست.":"ایمیل یا رمز عبور صحیح نیست.");
     loginButton.disabled=false; loginButton.textContent="ورود به پیوند"; return;
   }
 
