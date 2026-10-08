@@ -263,6 +263,10 @@
       <div class="header-title">
         گفتگوی همکاران
       </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-right:20px">
+        <button id="adminButton" type="button" style="display:none;border:0;border-radius:9px;padding:8px 12px;background:#2f7d57;color:white;font-family:inherit;cursor:pointer">پنل مدیریت</button>
+        <button id="logoutButton" type="button" style="border:0;border-radius:9px;padding:8px 12px;background:#b83a3a;color:white;font-family:inherit;cursor:pointer">خروج</button>
+      </div>
 
       <div
         class="live"
@@ -329,6 +333,53 @@
 
 
   // =====================================
+  // احراز هویت واقعی
+  // =====================================
+  let currentUser = null;
+  let currentRole = "user";
+
+  async function requireSession() {
+    const { data: { session }, error } = await supabaseClient.auth.getSession();
+    if (error || !session) {
+      localStorage.removeItem("peyvand_name");
+      localStorage.removeItem("peyvand_employee");
+      localStorage.removeItem("peyvand_user_id");
+      window.location.replace("index.html");
+      return false;
+    }
+    currentUser = session.user;
+
+    const { data: employee, error: employeeError } = await supabaseClient
+      .from("peyvand_employees")
+      .select("full_name,employee_number,email,is_active")
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
+
+    if (employeeError || !employee || !employee.is_active) {
+      await supabaseClient.auth.signOut();
+      localStorage.removeItem("peyvand_name");
+      localStorage.removeItem("peyvand_employee");
+      localStorage.removeItem("peyvand_user_id");
+      alert("دسترسی این حساب غیرفعال شده است.");
+      window.location.replace("index.html");
+      return false;
+    }
+
+    localStorage.setItem("peyvand_name", employee.full_name || "");
+    localStorage.setItem("peyvand_employee", employee.employee_number || "");
+    localStorage.setItem("peyvand_user_id", currentUser.id);
+
+    const { data: roleData } = await supabaseClient
+      .from("peyvand_user_roles")
+      .select("role")
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
+
+    currentRole = roleData?.role || "user";
+    return true;
+  }
+
+  // =====================================
   // اطلاعات کاربر
   // =====================================
 
@@ -351,6 +402,20 @@
     "employeeNumber"
   ).textContent =
     "پرسنلی: " + employeeNumber;
+
+  document.getElementById("logoutButton").addEventListener("click", async function () {
+    this.disabled = true;
+    this.textContent = "در حال خروج...";
+    await supabaseClient.auth.signOut();
+    localStorage.removeItem("peyvand_name");
+    localStorage.removeItem("peyvand_employee");
+    localStorage.removeItem("peyvand_user_id");
+    window.location.replace("index.html");
+  });
+
+  document.getElementById("adminButton").addEventListener("click", function () {
+    window.location.href = "admin.html";
+  });
 
 
   const messagesBox =
@@ -716,8 +781,42 @@
   // =====================================
   // شروع
   // =====================================
+  (async function startApp() {
+    const ok = await requireSession();
+    if (!ok) return;
 
-  loadMessages();
+    if (currentRole === "owner" || currentRole === "admin") {
+      document.getElementById("adminButton").style.display = "inline-block";
+    }
+
+    await loadMessages();
+
+    // اگر کاربر توسط مدیر مسدود شد، حداکثر ظرف یک دقیقه خارج می‌شود.
+    setInterval(async function () {
+      const { data: employee } = await supabaseClient
+        .from("peyvand_employees")
+        .select("is_active")
+        .eq("user_id", currentUser.id)
+        .maybeSingle();
+
+      if (!employee || !employee.is_active) {
+        await supabaseClient.auth.signOut();
+        localStorage.clear();
+        window.location.replace("index.html");
+      }
+    }, 60000);
+  })();
+
+  supabaseClient.auth.onAuthStateChange(function (event, session) {
+    if (event === "SIGNED_OUT" || !session) {
+      localStorage.removeItem("peyvand_name");
+      localStorage.removeItem("peyvand_employee");
+      localStorage.removeItem("peyvand_user_id");
+      if (!window.location.pathname.endsWith("index.html")) {
+        window.location.replace("index.html");
+      }
+    }
+  });
 
 </script>
 
