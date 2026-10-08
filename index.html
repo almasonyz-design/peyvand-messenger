@@ -1,522 +1,287 @@
-```html
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>پیوند | ورود همکاران</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: Tahoma, Arial, sans-serif;
-      background: #eef8f2;
-      color: #173b2b;
-    }
-
-    .login-box {
-      width: 100%;
-      max-width: 430px;
-      background: white;
-      padding: 35px;
-      border-radius: 22px;
-      box-shadow: 0 10px 35px rgba(0,0,0,.08);
-    }
-
-    .logo {
-      text-align: center;
-      font-size: 42px;
-      font-weight: bold;
-      color: #198754;
-      margin-bottom: 8px;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #667;
-      margin-bottom: 30px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    input {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid #cfe2d7;
-      border-radius: 12px;
-      margin-bottom: 18px;
-      font-family: inherit;
-      font-size: 15px;
-      outline: none;
-    }
-
-    input:focus {
-      border-color: #198754;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      border: 0;
-      border-radius: 12px;
-      background: #198754;
-      color: white;
-      font-family: inherit;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #157347;
-    }
-
-    button:disabled {
-      opacity: .6;
-      cursor: not-allowed;
-    }
-
-    .error {
-      display: none;
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 10px;
-      background: #fff1f0;
-      color: #b42318;
-      font-size: 13px;
-      line-height: 1.8;
-    }
-
-    .success {
-      display: none;
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 10px;
-      background: #e8f7ee;
-      color: #16794c;
-      font-size: 13px;
-      line-height: 1.8;
-    }
-
-    .info {
-      margin-top: 20px;
-      text-align: center;
-      font-size: 12px;
-      color: #899;
-      line-height: 1.8;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پیوند | ورود همکاران</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:Tahoma,Arial,sans-serif;background:#eef8f2;color:#173b2b;padding:20px}
+.login-box{width:100%;max-width:560px;background:#fff;padding:32px;border-radius:22px;box-shadow:0 10px 35px rgba(0,0,0,.08)}
+.logo{text-align:center;font-size:42px;font-weight:bold;color:#198754;margin-bottom:8px}
+.subtitle{text-align:center;color:#667;margin-bottom:26px}
+label{display:block;margin-bottom:8px;font-weight:bold;font-size:14px}
+input,select{width:100%;padding:13px;border:1px solid #cfe2d7;border-radius:12px;margin-bottom:16px;font-family:inherit;font-size:15px;outline:none;background:#fff}
+input:focus,select:focus{border-color:#198754}
+button{width:100%;padding:13px;border:0;border-radius:12px;background:#198754;color:#fff;font-family:inherit;font-size:15px;font-weight:bold;cursor:pointer}
+button:hover{background:#157347}
+button:disabled{opacity:.6;cursor:not-allowed}
+.secondary{background:#eef8f2;color:#176b45;border:1px solid #cfe2d7;margin-top:10px}
+.secondary:hover{background:#e2f2e9}
+.danger{background:#b42318}
+.danger:hover{background:#8f1c14}
+.error,.success,.panel{display:none;margin-top:15px;padding:13px;border-radius:12px;font-size:13px;line-height:1.9}
+.error{background:#fff1f0;color:#b42318}
+.success{background:#e8f7ee;color:#16794c}
+.panel{background:#f7fbf8;border:1px solid #dceee3}
+.panel h3{margin:0 0 8px}
+.muted{color:#718077;font-size:12px}
+.user-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid #dceee3;border-radius:12px;padding:12px;margin-top:9px}
+.user-info{flex:1}
+.user-name{font-weight:bold}
+.user-meta{font-size:12px;color:#718077;margin-top:4px}
+.user-actions{display:flex;gap:7px;min-width:125px}
+.user-actions button{width:auto;padding:8px 10px;font-size:12px}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;background:#e8f7ee;color:#16794c}
+.info{margin-top:20px;text-align:center;font-size:12px;color:#899;line-height:1.8}
+hr{border:0;border-top:1px solid #e5eee9;margin:20px 0}
+</style>
 </head>
-
 <body>
-
 <div class="login-box">
-
-  <div class="logo">
-    پیوند
-  </div>
-
-  <div class="subtitle">
-    پیام‌رسان اختصاصی همکاران
-  </div>
+  <div class="logo">پیوند</div>
+  <div class="subtitle">پیام‌رسان اختصاصی همکاران</div>
 
   <form id="loginForm">
+    <label for="name">نام و نام خانوادگی</label>
+    <input id="name" type="text" placeholder="نام و نام خانوادگی" required>
 
-    <label for="name">
-      نام و نام خانوادگی
-    </label>
+    <label for="employee">شماره پرسنلی</label>
+    <input id="employee" type="text" placeholder="شماره پرسنلی" required>
 
-    <input
-      id="name"
-      type="text"
-      placeholder="نام و نام خانوادگی"
-      required
-    >
+    <label for="email">ایمیل</label>
+    <input id="email" type="email" placeholder="ایمیل حساب کاربری" required>
 
-    <label for="employee">
-      شماره پرسنلی
-    </label>
+    <label for="password">رمز عبور</label>
+    <input id="password" type="password" placeholder="رمز عبور" required>
 
-    <input
-      id="employee"
-      type="text"
-      placeholder="شماره پرسنلی"
-      required
-    >
-
-    <label for="email">
-      ایمیل
-    </label>
-
-    <input
-      id="email"
-      type="email"
-      placeholder="ایمیل حساب کاربری"
-      required
-    >
-
-    <label for="password">
-      رمز عبور
-    </label>
-
-    <input
-      id="password"
-      type="password"
-      placeholder="رمز عبور"
-      required
-    >
-
-    <button
-      id="loginButton"
-      type="submit"
-    >
-      ورود به پیوند
-    </button>
-
-    <div
-      id="errorBox"
-      class="error"
-    ></div>
-
-    <div
-      id="successBox"
-      class="success"
-    ></div>
-
+    <button id="loginButton" type="submit">ورود به پیوند</button>
+    <div id="errorBox" class="error"></div>
+    <div id="successBox" class="success"></div>
   </form>
 
-  <div class="info">
-    دسترسی فقط برای همکاران ثبت‌شده امکان‌پذیر است.
-  </div>
+  <section id="ownerPanel" class="panel">
+    <h3>👑 مدیریت مدیران</h3>
+    <div class="muted">فقط مالک سیستم می‌تواند مدیر اضافه یا حذف کند. حذف مدیر یعنی برگرداندن نقش او به «کاربر عادی»؛ حساب او حذف نمی‌شود.</div>
+    <div id="adminsList"></div>
+    <hr>
+    <label for="userSelect">انتخاب کاربر برای مدیر شدن</label>
+    <select id="userSelect"></select>
+    <button id="addAdminBtn" type="button">➕ معرفی به عنوان مدیر</button>
+    <button id="enterBtn" class="secondary" type="button">ورود به پیوند</button>
+    <button id="logoutBtn" class="secondary" type="button">🚪 خروج از حساب</button>
+  </section>
 
+  <div class="info">دسترسی فقط برای همکاران ثبت‌شده امکان‌پذیر است.</div>
 </div>
 
-
 <script>
+const SUPABASE_URL="https://ydgfjupryhuiyriaxvin.supabase.co";
+const SUPABASE_KEY="sb_publishable__hlPVmThO6PDb-_LSvMzWw_uAeHKMxs";
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-  // =====================================
-  // Supabase
-  // =====================================
+const form=document.getElementById("loginForm");
+const loginButton=document.getElementById("loginButton");
+const errorBox=document.getElementById("errorBox");
+const successBox=document.getElementById("successBox");
+const ownerPanel=document.getElementById("ownerPanel");
+const adminsList=document.getElementById("adminsList");
+const userSelect=document.getElementById("userSelect");
+const addAdminBtn=document.getElementById("addAdminBtn");
+const enterBtn=document.getElementById("enterBtn");
+const logoutBtn=document.getElementById("logoutBtn");
 
-  const SUPABASE_URL =
-    "https://ydgfjupryhuiyriaxvin.supabase.co";
+let currentUser=null;
+let currentRole=null;
+let employeeCache=[];
 
-  const SUPABASE_KEY =
-    "sb_publishable__hlPVmThO6PDb-_LSvMzWw_uAeHKMxs";
+function showError(message){errorBox.textContent=message;errorBox.style.display="block";successBox.style.display="none"}
+function showSuccess(message){successBox.textContent=message;successBox.style.display="block";errorBox.style.display="none"}
+function hideMessages(){errorBox.style.display="none";successBox.style.display="none"}
 
+async function loadOwnerPanel(){
+  ownerPanel.style.display="block";
+  adminsList.innerHTML="<div class='muted'>در حال بارگذاری...</div>";
 
-  const supabaseClient =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+  const {data:employees,error:e1}=await supabaseClient
+    .from("peyvand_employees")
+    .select("id,user_id,full_name,employee_number,email,is_active")
+    .order("full_name",{ascending:true});
 
+  if(e1) throw e1;
 
-  // اگر قبلاً وارد شده، از صفحه ورود عبور کن
-  (async function () {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (session) {
-      window.location.href = "chat.html";
-      return;
+  const {data:roles,error:e2}=await supabaseClient
+    .from("peyvand_user_roles")
+    .select("user_id,role");
+
+  if(e2) throw e2;
+
+  const roleMap=new Map((roles||[]).map(r=>[r.user_id,r.role]));
+  employeeCache=employees||[];
+
+  const admins=employeeCache.filter(e=>roleMap.get(e.user_id)==="admin");
+
+  adminsList.innerHTML=admins.length
+    ? admins.map(e=>`
+      <div class="user-row">
+        <div class="user-info">
+          <div class="user-name">${escapeHtml(e.full_name)} <span class="badge">مدیر</span></div>
+          <div class="user-meta">پرسنلی: ${escapeHtml(e.employee_number)} | ${escapeHtml(e.email)}</div>
+        </div>
+        <div class="user-actions">
+          <button class="danger" onclick="removeAdmin('${e.user_id}')">حذف مدیر</button>
+        </div>
+      </div>`).join("")
+    : "<div class='muted'>هنوز مدیری غیر از مالک ثبت نشده است.</div>";
+
+  const candidates=employeeCache.filter(e=>roleMap.get(e.user_id)!=="owner" && roleMap.get(e.user_id)!=="admin" && e.is_active);
+
+  userSelect.innerHTML=candidates.length
+    ? candidates.map(e=>`<option value="${e.user_id}">${escapeHtml(e.full_name)} — ${escapeHtml(e.employee_number)}</option>`).join("")
+    : "<option value=''>کاربر عادی فعالی وجود ندارد</option>";
+
+  addAdminBtn.disabled=!candidates.length;
+}
+
+function escapeHtml(value){
+  return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
+}
+
+window.removeAdmin=async function(userId){
+  if(!currentUser || currentRole!=="owner") return;
+  if(!confirm("این کاربر از مدیریت حذف و به کاربر عادی تبدیل شود؟")) return;
+
+  const {error}=await supabaseClient
+    .from("peyvand_user_roles")
+    .update({role:"user"})
+    .eq("user_id",userId)
+    .neq("role","owner");
+
+  if(error){showError("حذف مدیر انجام نشد: "+error.message);return}
+  showSuccess("مدیر با موفقیت حذف شد.");
+  await loadOwnerPanel();
+};
+
+addAdminBtn.addEventListener("click",async()=>{
+  const userId=userSelect.value;
+  if(!userId || !currentUser || currentRole!=="owner") return;
+
+  addAdminBtn.disabled=true;
+  const {data:existing}=await supabaseClient
+    .from("peyvand_user_roles")
+    .select("user_id")
+    .eq("user_id",userId)
+    .maybeSingle();
+
+  let error=null;
+  if(existing){
+    ({error}=await supabaseClient.from("peyvand_user_roles").update({role:"admin"}).eq("user_id",userId));
+  }else{
+    ({error}=await supabaseClient.from("peyvand_user_roles").insert({user_id:userId,role:"admin"}));
+  }
+
+  if(error) showError("معرفی مدیر انجام نشد: "+error.message);
+  else {showSuccess("کاربر با موفقیت به عنوان مدیر معرفی شد.");await loadOwnerPanel();}
+  addAdminBtn.disabled=false;
+});
+
+enterBtn.addEventListener("click",()=>window.location.href="chat.html");
+
+logoutBtn.addEventListener("click",async()=>{
+  await supabaseClient.auth.signOut();
+  currentUser=null; currentRole=null;
+  ownerPanel.style.display="none";
+  form.style.display="block";
+  hideMessages();
+  form.reset();
+});
+
+(async()=>{
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(session){
+    currentUser=session.user;
+    form.style.display="none";
+    try{
+      const {data:emp,error:ee}=await supabaseClient.from("peyvand_employees")
+        .select("id,user_id,full_name,employee_number,email,is_active")
+        .eq("user_id",session.user.id).maybeSingle();
+      if(ee||!emp||!emp.is_active) throw new Error("حساب شما فعال نیست.");
+      const {data:role,error:re}=await supabaseClient.from("peyvand_user_roles")
+        .select("role").eq("user_id",session.user.id).maybeSingle();
+      if(re||!role) throw new Error("برای این حساب نقشی ثبت نشده است.");
+      currentRole=role.role;
+      if(currentRole==="owner") await loadOwnerPanel();
+      else window.location.href="chat.html";
+    }catch(e){
+      await supabaseClient.auth.signOut();
+      form.style.display="block";
+      showError(e.message||"خطا در بررسی حساب.");
     }
+  }else{
     localStorage.removeItem("peyvand_name");
     localStorage.removeItem("peyvand_employee");
     localStorage.removeItem("peyvand_user_id");
-  })();
+  }
+})();
 
-  // =====================================
-  // عناصر صفحه
-  // =====================================
+form.addEventListener("submit",async event=>{
+  event.preventDefault();
+  hideMessages();
+  const name=document.getElementById("name").value.trim();
+  const employee=document.getElementById("employee").value.trim();
+  const email=document.getElementById("email").value.trim().toLowerCase();
+  const password=document.getElementById("password").value;
+  if(!name||!employee||!email||!password){showError("لطفاً همه اطلاعات را وارد کنید.");return}
 
-  const form =
-    document.getElementById("loginForm");
+  loginButton.disabled=true;
+  loginButton.textContent="در حال بررسی...";
 
-  const loginButton =
-    document.getElementById("loginButton");
-
-  const errorBox =
-    document.getElementById("errorBox");
-
-  const successBox =
-    document.getElementById("successBox");
-
-
-  function showError(message) {
-
-    errorBox.textContent = message;
-
-    errorBox.style.display = "block";
-
-    successBox.style.display = "none";
+  const {data:authData,error:authError}=await supabaseClient.auth.signInWithPassword({email,password});
+  if(authError){
+    showError("ایمیل یا رمز عبور صحیح نیست.");
+    loginButton.disabled=false; loginButton.textContent="ورود به پیوند"; return;
   }
 
+  const {data:employeeData,error:employeeError}=await supabaseClient
+    .from("peyvand_employees")
+    .select("id,user_id,full_name,employee_number,email,is_active")
+    .eq("user_id",authData.user.id).eq("employee_number",employee).eq("email",email).eq("is_active",true).maybeSingle();
 
-  function showSuccess(message) {
-
-    successBox.textContent = message;
-
-    successBox.style.display = "block";
-
-    errorBox.style.display = "none";
+  if(employeeError||!employeeData){
+    await supabaseClient.auth.signOut();
+    showError(employeeError?"خطا در بررسی دسترسی همکار.":"این حساب یا شماره پرسنلی در فهرست همکاران ثبت نشده است.");
+    loginButton.disabled=false; loginButton.textContent="ورود به پیوند"; return;
   }
 
-
-  // =====================================
-  // ورود
-  // =====================================
-
-  form.addEventListener(
-    "submit",
-    async function(event) {
-
-      event.preventDefault();
-
-
-      errorBox.style.display = "none";
-
-      successBox.style.display = "none";
-
-
-      const name =
-        document
-          .getElementById("name")
-          .value
-          .trim();
-
-
-      const employee =
-        document
-          .getElementById("employee")
-          .value
-          .trim();
-
-
-      const email =
-        document
-          .getElementById("email")
-          .value
-          .trim()
-          .toLowerCase();
-
-
-      const password =
-        document
-          .getElementById("password")
-          .value;
-
-
-      if (
-        !name ||
-        !employee ||
-        !email ||
-        !password
-      ) {
-
-        showError(
-          "لطفاً همه اطلاعات را وارد کنید."
-        );
-
-        return;
-      }
-
-
-      loginButton.disabled = true;
-
-      loginButton.textContent =
-        "در حال بررسی...";
-
-
-      // =====================================
-      // 1. ورود واقعی Supabase
-      // =====================================
-
-      const {
-        data: authData,
-        error: authError
-      } =
-        await supabaseClient.auth
-          .signInWithPassword({
-
-            email: email,
-
-            password: password
-
-          });
-
-
-      if (authError) {
-
-        console.error(authError);
-
-        showError(
-          "ایمیل یا رمز عبور صحیح نیست."
-        );
-
-        loginButton.disabled = false;
-
-        loginButton.textContent =
-          "ورود به پیوند";
-
-        return;
-      }
-
-
-      // =====================================
-      // 2. بررسی کاربر در لیست همکاران
-      // =====================================
-
-      const {
-        data: employeeData,
-        error: employeeError
-      } =
-        await supabaseClient
-          .from("peyvand_employees")
-          .select(
-            "id, user_id, full_name, employee_number, email, is_active"
-          )
-          .eq(
-            "user_id",
-            authData.user.id
-          )
-          .eq(
-            "employee_number",
-            employee
-          )
-          .eq(
-            "email",
-            email
-          )
-          .eq(
-            "is_active",
-            true
-          )
-          .maybeSingle();
-
-
-      if (employeeError) {
-
-        console.error(employeeError);
-
-        await supabaseClient.auth.signOut();
-
-        showError(
-          "خطا در بررسی دسترسی همکار."
-        );
-
-        loginButton.disabled = false;
-
-        loginButton.textContent =
-          "ورود به پیوند";
-
-        return;
-      }
-
-
-      if (!employeeData) {
-
-        await supabaseClient.auth.signOut();
-
-        showError(
-          "این حساب یا شماره پرسنلی در فهرست همکاران ثبت نشده است."
-        );
-
-        loginButton.disabled = false;
-
-        loginButton.textContent =
-          "ورود به پیوند";
-
-        return;
-      }
-
-
-      // =====================================
-      // 3. بررسی نام
-      // =====================================
-
-      if (
-        employeeData.full_name &&
-        employeeData.full_name !== "کاربر آزمایشی" &&
-        employeeData.full_name.trim() !== name.trim()
-      ) {
-
-        await supabaseClient.auth.signOut();
-
-        showError(
-          "نام و نام خانوادگی با اطلاعات ثبت‌شده مطابقت ندارد."
-        );
-
-        loginButton.disabled = false;
-
-        loginButton.textContent =
-          "ورود به پیوند";
-
-        return;
-      }
-
-
-      // =====================================
-      // 4. ذخیره اطلاعات کاربر
-      // =====================================
-
-      localStorage.setItem(
-        "peyvand_name",
-        employeeData.full_name || name
-      );
-
-
-      localStorage.setItem(
-        "peyvand_employee",
-        employeeData.employee_number
-      );
-
-
-      localStorage.setItem(
-        "peyvand_user_id",
-        authData.user.id
-      );
-
-
-      // =====================================
-      // 5. ورود به چت
-      // =====================================
-
-      showSuccess(
-        "ورود موفق بود؛ در حال ورود به پیوند..."
-      );
-
-
-      setTimeout(
-        function() {
-
-          window.location.href =
-            "https://almasonyz-design.github.io/peyvand-messenger/chat.html";
-
-        },
-        500
-      );
-
-    }
-  );
-
+  if(employeeData.full_name && employeeData.full_name!=="کاربر آزمایشی" && employeeData.full_name.trim()!==name){
+    await supabaseClient.auth.signOut();
+    showError("نام و نام خانوادگی با اطلاعات ثبت‌شده مطابقت ندارد.");
+    loginButton.disabled=false; loginButton.textContent="ورود به پیوند"; return;
+  }
+
+  const {data:roleData,error:roleError}=await supabaseClient.from("peyvand_user_roles").select("role").eq("user_id",authData.user.id).maybeSingle();
+  if(roleError||!roleData){
+    await supabaseClient.auth.signOut();
+    showError("برای این حساب نقش مدیریتی/کاربری ثبت نشده است.");
+    loginButton.disabled=false; loginButton.textContent="ورود به پیوند"; return;
+  }
+
+  currentUser=authData.user;
+  currentRole=roleData.role;
+  localStorage.setItem("peyvand_name",employeeData.full_name||name);
+  localStorage.setItem("peyvand_employee",employeeData.employee_number);
+  localStorage.setItem("peyvand_user_id",authData.user.id);
+
+  if(currentRole==="owner"){
+    form.style.display="none";
+    showSuccess("ورود مالک سیستم موفق بود. از همین صفحه می‌توانید مدیرها را اضافه یا حذف کنید.");
+    await loadOwnerPanel();
+  }else{
+    showSuccess("ورود موفق بود؛ در حال ورود به پیوند...");
+    setTimeout(()=>window.location.href="chat.html",400);
+  }
+});
 </script>
-
 </body>
 </html>
-```
