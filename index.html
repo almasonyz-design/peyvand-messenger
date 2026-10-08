@@ -28,7 +28,7 @@
 
     .login-box {
       width: 100%;
-      max-width: 420px;
+      max-width: 430px;
       background: white;
       padding: 35px;
       border-radius: 22px;
@@ -104,6 +104,17 @@
       line-height: 1.8;
     }
 
+    .success {
+      display: none;
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #e8f7ee;
+      color: #16794c;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
     .info {
       margin-top: 20px;
       text-align: center;
@@ -116,92 +127,100 @@
 
 <body>
 
-  <div class="login-box">
+<div class="login-box">
 
-    <div class="logo">پیوند</div>
-
-    <div class="subtitle">
-      پیام‌رسان اختصاصی همکاران
-    </div>
-
-    <form id="loginForm">
-
-      <label for="name">
-        نام و نام خانوادگی
-      </label>
-
-      <input
-        id="name"
-        type="text"
-        placeholder="مثلاً محمدحسین رافعی"
-        required
-      >
-
-      <label for="employee">
-        شماره پرسنلی
-      </label>
-
-      <input
-        id="employee"
-        type="text"
-        placeholder="شماره پرسنلی"
-        required
-      >
-
-      <label for="email">
-        ایمیل
-      </label>
-
-      <input
-        id="email"
-        type="email"
-        placeholder="ایمیل حساب کاربری"
-        required
-      >
-
-      <label for="password">
-        رمز عبور
-      </label>
-
-      <input
-        id="password"
-        type="password"
-        placeholder="رمز عبور"
-        required
-      >
-
-      <button
-        id="loginButton"
-        type="submit"
-      >
-        ورود به پیوند
-      </button>
-
-      <div
-        id="errorBox"
-        class="error"
-      ></div>
-
-    </form>
-
-    <div class="info">
-      حساب کاربری توسط مدیر سامانه ایجاد می‌شود.
-    </div>
-
+  <div class="logo">
+    پیوند
   </div>
+
+  <div class="subtitle">
+    پیام‌رسان اختصاصی همکاران
+  </div>
+
+  <form id="loginForm">
+
+    <label for="name">
+      نام و نام خانوادگی
+    </label>
+
+    <input
+      id="name"
+      type="text"
+      placeholder="نام و نام خانوادگی"
+      required
+    >
+
+    <label for="employee">
+      شماره پرسنلی
+    </label>
+
+    <input
+      id="employee"
+      type="text"
+      placeholder="شماره پرسنلی"
+      required
+    >
+
+    <label for="email">
+      ایمیل
+    </label>
+
+    <input
+      id="email"
+      type="email"
+      placeholder="ایمیل حساب کاربری"
+      required
+    >
+
+    <label for="password">
+      رمز عبور
+    </label>
+
+    <input
+      id="password"
+      type="password"
+      placeholder="رمز عبور"
+      required
+    >
+
+    <button
+      id="loginButton"
+      type="submit"
+    >
+      ورود به پیوند
+    </button>
+
+    <div
+      id="errorBox"
+      class="error"
+    ></div>
+
+    <div
+      id="successBox"
+      class="success"
+    ></div>
+
+  </form>
+
+  <div class="info">
+    دسترسی فقط برای همکاران ثبت‌شده امکان‌پذیر است.
+  </div>
+
+</div>
 
 
 <script>
 
-  // ==============================
+  // =====================================
   // Supabase
-  // ==============================
+  // =====================================
 
   const SUPABASE_URL =
     "https://ydgfjupryhuiyriaxvin.supabase.co";
 
   const SUPABASE_KEY =
     "sb_publishable__hlPVmThO6PDb-_LSvMzWw_uAeHKMxs";
+
 
   const supabaseClient =
     window.supabase.createClient(
@@ -210,9 +229,9 @@
     );
 
 
-  // ==============================
+  // =====================================
   // عناصر صفحه
-  // ==============================
+  // =====================================
 
   const form =
     document.getElementById("loginForm");
@@ -223,18 +242,33 @@
   const errorBox =
     document.getElementById("errorBox");
 
+  const successBox =
+    document.getElementById("successBox");
+
 
   function showError(message) {
 
     errorBox.textContent = message;
 
     errorBox.style.display = "block";
+
+    successBox.style.display = "none";
   }
 
 
-  // ==============================
+  function showSuccess(message) {
+
+    successBox.textContent = message;
+
+    successBox.style.display = "block";
+
+    errorBox.style.display = "none";
+  }
+
+
+  // =====================================
   // ورود
-  // ==============================
+  // =====================================
 
   form.addEventListener(
     "submit",
@@ -242,7 +276,11 @@
 
       event.preventDefault();
 
+
       errorBox.style.display = "none";
+
+      successBox.style.display = "none";
+
 
       const name =
         document
@@ -250,17 +288,21 @@
           .value
           .trim();
 
+
       const employee =
         document
           .getElementById("employee")
           .value
           .trim();
 
+
       const email =
         document
           .getElementById("email")
           .value
-          .trim();
+          .trim()
+          .toLowerCase();
+
 
       const password =
         document
@@ -268,7 +310,12 @@
           .value;
 
 
-      if (!name || !employee || !email || !password) {
+      if (
+        !name ||
+        !employee ||
+        !email ||
+        !password
+      ) {
 
         showError(
           "لطفاً همه اطلاعات را وارد کنید."
@@ -281,27 +328,33 @@
       loginButton.disabled = true;
 
       loginButton.textContent =
-        "در حال ورود...";
+        "در حال بررسی...";
 
 
-      // ورود واقعی به Supabase Auth
+      // =====================================
+      // 1. ورود واقعی Supabase
+      // =====================================
 
-      const { data, error } =
-        await supabaseClient.auth.signInWithPassword({
+      const {
+        data: authData,
+        error: authError
+      } =
+        await supabaseClient.auth
+          .signInWithPassword({
 
-          email: email,
+            email: email,
 
-          password: password
+            password: password
 
-        });
+          });
 
 
-      if (error) {
+      if (authError) {
 
-        console.error(error);
+        console.error(authError);
 
         showError(
-          "ورود ناموفق بود. ایمیل یا رمز عبور صحیح نیست."
+          "ایمیل یا رمز عبور صحیح نیست."
         );
 
         loginButton.disabled = false;
@@ -313,31 +366,139 @@
       }
 
 
-      // ذخیره اطلاعات نمایشی کاربر
+      // =====================================
+      // 2. بررسی کاربر در لیست همکاران
+      // =====================================
+
+      const {
+        data: employeeData,
+        error: employeeError
+      } =
+        await supabaseClient
+          .from("peyvand_employees")
+          .select(
+            "id, user_id, full_name, employee_number, email, is_active"
+          )
+          .eq(
+            "user_id",
+            authData.user.id
+          )
+          .eq(
+            "employee_number",
+            employee
+          )
+          .eq(
+            "email",
+            email
+          )
+          .eq(
+            "is_active",
+            true
+          )
+          .maybeSingle();
+
+
+      if (employeeError) {
+
+        console.error(employeeError);
+
+        await supabaseClient.auth.signOut();
+
+        showError(
+          "خطا در بررسی دسترسی همکار."
+        );
+
+        loginButton.disabled = false;
+
+        loginButton.textContent =
+          "ورود به پیوند";
+
+        return;
+      }
+
+
+      if (!employeeData) {
+
+        await supabaseClient.auth.signOut();
+
+        showError(
+          "این حساب یا شماره پرسنلی در فهرست همکاران ثبت نشده است."
+        );
+
+        loginButton.disabled = false;
+
+        loginButton.textContent =
+          "ورود به پیوند";
+
+        return;
+      }
+
+
+      // =====================================
+      // 3. بررسی نام
+      // =====================================
+
+      if (
+        employeeData.full_name &&
+        employeeData.full_name !== "کاربر آزمایشی" &&
+        employeeData.full_name.trim() !== name.trim()
+      ) {
+
+        await supabaseClient.auth.signOut();
+
+        showError(
+          "نام و نام خانوادگی با اطلاعات ثبت‌شده مطابقت ندارد."
+        );
+
+        loginButton.disabled = false;
+
+        loginButton.textContent =
+          "ورود به پیوند";
+
+        return;
+      }
+
+
+      // =====================================
+      // 4. ذخیره اطلاعات کاربر
+      // =====================================
 
       localStorage.setItem(
         "peyvand_name",
-        name
+        employeeData.full_name || name
       );
+
 
       localStorage.setItem(
         "peyvand_employee",
-        employee
+        employeeData.employee_number
       );
 
-
-      // ذخیره شناسه واقعی کاربر
 
       localStorage.setItem(
         "peyvand_user_id",
-        data.user.id
+        authData.user.id
       );
 
 
-      // ورود موفق
+      // =====================================
+      // 5. ورود به چت
+      // =====================================
 
-      window.location.href =
-        "https://almasonyz-design.github.io/peyvand-messenger/chat.html";
+      showSuccess(
+        "ورود موفق بود؛ در حال ورود به پیوند..."
+      );
+
+
+      setTimeout(
+        function() {
+
+          window.location.href =
+            "https://almasonyz-design.github.io/peyvand-messenger/chat.html";
+
+        },
+        500
+      );
 
     }
   );
