@@ -4,14 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>پیوند | گفتگوی همکاران</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">let starredOnly=false;
-function applyMessageFilters(){const q=(document.getElementById("pSearch").value||"").toLowerCase();let stars=[];try{stars=JSON.parse(localStorage.getItem("peyvand_starred_v1")||"[]")}catch(e){}messagesBox.querySelectorAll(".message").forEach(el=>{const row=el.closest("[data-message-id]")||el;const id=String(row.getAttribute("data-message-id")||"");row.style.display=(!q||el.textContent.toLowerCase().includes(q))&&(!starredOnly||stars.includes(id))?"":"none"})}
-document.getElementById("pSearch").addEventListener("input",applyMessageFilters);
-document.getElementById("pAll").onclick=function(){starredOnly=false;this.classList.add("active");document.getElementById("pStarred").classList.remove("active");applyMessageFilters()};
-document.getElementById("pStarred").onclick=function(){starredOnly=true;this.classList.add("active");document.getElementById("pAll").classList.remove("active");applyMessageFilters()};
-document.getElementById("pTheme").onclick=function(){document.body.classList.toggle("dark");localStorage.setItem("peyvand_dark",document.body.classList.contains("dark"))};if(localStorage.getItem("peyvand_dark")==="true")document.body.classList.add("dark");
-document.getElementById("pEmoji").onclick=function(){const e=prompt("ایموجی را کپی کن و اینجا وارد کن: 😀 😂 😊 🙏 👍 ❤️ 🎉 🤝 💚 ✅ 🚚 ☕ 🌱");if(e){messageInput.value+=e;messageInput.focus()}};
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#eef8f2;color:#173b2b}
@@ -194,6 +187,13 @@ supabaseClient.auth.onAuthStateChange(function(event,session){
   if(!window.location.pathname.endsWith("index.html"))window.location.replace("index.html");
  }
 });
+let starredOnly=false;
+function applyMessageFilters(){const q=(document.getElementById("pSearch").value||"").toLowerCase();let stars=[];try{stars=JSON.parse(localStorage.getItem("peyvand_starred_v1")||"[]")}catch(e){}messagesBox.querySelectorAll(".message").forEach(el=>{const row=el.closest("[data-message-id]")||el;const id=String(row.getAttribute("data-message-id")||"");row.style.display=(!q||el.textContent.toLowerCase().includes(q))&&(!starredOnly||stars.includes(id))?"":"none"})}
+document.getElementById("pSearch").addEventListener("input",applyMessageFilters);
+document.getElementById("pAll").onclick=function(){starredOnly=false;this.classList.add("active");document.getElementById("pStarred").classList.remove("active");applyMessageFilters()};
+document.getElementById("pStarred").onclick=function(){starredOnly=true;this.classList.add("active");document.getElementById("pAll").classList.remove("active");applyMessageFilters()};
+document.getElementById("pTheme").onclick=function(){document.body.classList.toggle("dark");localStorage.setItem("peyvand_dark",document.body.classList.contains("dark"))};if(localStorage.getItem("peyvand_dark")==="true")document.body.classList.add("dark");
+document.getElementById("pEmoji").onclick=function(){const e=prompt("ایموجی را کپی کن و اینجا وارد کن: 😀 😂 😊 🙏 👍 ❤️ 🎉 🤝 💚 ✅ 🚚 ☕ 🌱");if(e){messageInput.value+=e;messageInput.focus()}};
 </script>
 </body>
 </html>
