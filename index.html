@@ -5,37 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>پیوند | ورود همکاران</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-*{box-sizing:border-box}
-body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:Tahoma,Arial,sans-serif;background:#eef8f2;color:#173b2b;padding:20px}
-.login-box{width:100%;max-width:560px;background:#fff;padding:32px;border-radius:22px;box-shadow:0 10px 35px rgba(0,0,0,.08)}
-.logo{text-align:center;font-size:42px;font-weight:bold;color:#198754;margin-bottom:8px}
-.subtitle{text-align:center;color:#667;margin-bottom:26px}
-label{display:block;margin-bottom:8px;font-weight:bold;font-size:14px}
-input,select{width:100%;padding:13px;border:1px solid #cfe2d7;border-radius:12px;margin-bottom:16px;font-family:inherit;font-size:15px;outline:none;background:#fff}
-input:focus,select:focus{border-color:#198754}
-button{width:100%;padding:13px;border:0;border-radius:12px;background:#198754;color:#fff;font-family:inherit;font-size:15px;font-weight:bold;cursor:pointer}
-button:hover{background:#157347}
-button:disabled{opacity:.6;cursor:not-allowed}
-.secondary{background:#eef8f2;color:#176b45;border:1px solid #cfe2d7;margin-top:10px}
-.secondary:hover{background:#e2f2e9}
-.danger{background:#b42318}
-.danger:hover{background:#8f1c14}
-.error,.success,.panel{display:none;margin-top:15px;padding:13px;border-radius:12px;font-size:13px;line-height:1.9}
-.error{background:#fff1f0;color:#b42318}
-.success{background:#e8f7ee;color:#16794c}
-.panel{background:#f7fbf8;border:1px solid #dceee3}
-.panel h3{margin:0 0 8px}
-.muted{color:#718077;font-size:12px}
-.user-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid #dceee3;border-radius:12px;padding:12px;margin-top:9px}
-.user-info{flex:1}
-.user-name{font-weight:bold}
-.user-meta{font-size:12px;color:#718077;margin-top:4px}
-.user-actions{display:flex;gap:7px;min-width:125px}
-.user-actions button{width:auto;padding:8px 10px;font-size:12px}
-.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;background:#e8f7ee;color:#16794c}
-.info{margin-top:20px;text-align:center;font-size:12px;color:#899;line-height:1.8}
-hr{border:0;border-top:1px solid #e5eee9;margin:20px 0}
+<style>@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
+body{font-family:Vazirmatn,Tahoma,Arial,sans-serif;background:radial-gradient(ellipse at 15% 10%,#c8f0d8 0,transparent 32%),radial-gradient(ellipse at 90% 85%,#c8e9d6 0,transparent 32%),linear-gradient(135deg,#f2faf5,#e8f5ed);color:#173b2b;position:relative;overflow-x:hidden}
+body:before,body:after{content:"";position:fixed;border:1px solid #1b8b5a16;border-radius:50%;pointer-events:none}body:before{width:440px;height:440px;left:-180px;top:-190px;box-shadow:0 0 0 35px #1b8b5a06,0 0 0 75px #1b8b5a04}body:after{width:330px;height:330px;right:-130px;bottom:-170px;box-shadow:0 0 0 35px #1b8b5a06,0 0 0 75px #1b8b5a04}
+.login-box{background:#ffffffed;backdrop-filter:blur(22px);padding:clamp(25px,5vw,42px);border-radius:30px;border:1px solid #fff;box-shadow:0 24px 80px #174b3014,0 3px 12px #174b3008}
+.logo{font-size:43px;font-weight:800;color:#0e7653}.logo:before{content:"پ";display:grid;place-items:center;width:66px;height:66px;border-radius:22px;margin:0 auto 12px;color:#fff;font-size:35px;background:linear-gradient(145deg,#20a875,#075a3e);box-shadow:0 12px 26px #0e76532e}
+.subtitle{font-size:13px}.subtitle:after{content:"";display:block;width:46px;height:3px;border-radius:99px;background:#9dddb8;margin:16px auto 0}
+label{font-size:12px;color:#3c5949}input,select{padding:14px 15px;border:1px solid #dce9e0;border-radius:14px;background:#fbfdfb;font-size:13px;transition:.2s}input:focus,select:focus{border-color:#61b98a;box-shadow:0 0 0 4px #2ba66b13}
+button{border-radius:14px;background:linear-gradient(135deg,#15966a,#0b704d);font-size:13px;box-shadow:0 8px 20px #0e765323;transition:transform .18s}button:hover{transform:translateY(-1px)}.secondary{background:#eef8f2;box-shadow:none}.danger{background:#b42318;box-shadow:none}
+@media(max-width:480px){body{padding:12px}.login-box{padding:25px 20px;border-radius:23px}.logo:before{width:58px;height:58px;border-radius:19px}}
 </style>
 </head>
 <body>
