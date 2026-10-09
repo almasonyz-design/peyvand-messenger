@@ -4,7 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>پیوند | گفتگوی همکاران</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">let starredOnly=false;
+function applyMessageFilters(){const q=(document.getElementById("pSearch").value||"").toLowerCase();let stars=[];try{stars=JSON.parse(localStorage.getItem("peyvand_starred_v1")||"[]")}catch(e){}messagesBox.querySelectorAll(".message").forEach(el=>{const row=el.closest("[data-message-id]")||el;const id=String(row.getAttribute("data-message-id")||"");row.style.display=(!q||el.textContent.toLowerCase().includes(q))&&(!starredOnly||stars.includes(id))?"":"none"})}
+document.getElementById("pSearch").addEventListener("input",applyMessageFilters);
+document.getElementById("pAll").onclick=function(){starredOnly=false;this.classList.add("active");document.getElementById("pStarred").classList.remove("active");applyMessageFilters()};
+document.getElementById("pStarred").onclick=function(){starredOnly=true;this.classList.add("active");document.getElementById("pAll").classList.remove("active");applyMessageFilters()};
+document.getElementById("pTheme").onclick=function(){document.body.classList.toggle("dark");localStorage.setItem("peyvand_dark",document.body.classList.contains("dark"))};if(localStorage.getItem("peyvand_dark")==="true")document.body.classList.add("dark");
+document.getElementById("pEmoji").onclick=function(){const e=prompt("ایموجی را کپی کن و اینجا وارد کن: 😀 😂 😊 🙏 👍 ❤️ 🎉 🤝 💚 ✅ 🚚 ☕ 🌱");if(e){messageInput.value+=e;messageInput.focus()}};
+</script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#eef8f2;color:#173b2b}
@@ -41,6 +48,21 @@ body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#eef8f2;color:#173b
 .composer button:disabled{opacity:.6;cursor:not-allowed}
 .composer button:hover:not(:disabled){background:#157347}
 @media(max-width:700px){.sidebar{display:none}.message{max-width:90%}}
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
+body{font-family:Vazirmatn,Tahoma,sans-serif;background:radial-gradient(ellipse at 10% 0,#d5f2e0,transparent 35%),#f2f7f4;color:#18372b}
+.app{max-width:1500px;gap:18px;padding:18px;background:transparent;box-shadow:none}
+.sidebar{background:#fff;border:1px solid #e2ece5;border-radius:24px;box-shadow:0 16px 50px #153e2a0c}
+.logo{font-size:38px;color:#0e7653}.logo:before{content:"پ";display:grid;place-items:center;margin:0 auto 10px;width:62px;height:62px;border-radius:21px;color:white;background:linear-gradient(145deg,#15966a,#075c40);box-shadow:0 9px 24px #0e765333}
+.chat-title{background:linear-gradient(135deg,#15966a,#0b704d);border-radius:14px;box-shadow:0 8px 20px #0e765322}
+.main{background:#fff;border:1px solid #e2ece5;border-radius:24px;overflow:hidden;box-shadow:0 16px 50px #153e2a0c}
+.header{height:auto;min-height:82px;padding:18px 24px;background:linear-gradient(120deg,#fff,#f7fcf8)}.header-title{font-size:21px}
+.live{background:#e8f8ef;padding:8px 12px;border-radius:99px;font-size:11px}
+.messages{background:radial-gradient(ellipse at top right,#f0faf4,transparent 45%),#fcfdfc;padding:25px}
+.message{border-radius:17px 17px 4px 17px;border-color:#e4eee7;box-shadow:0 5px 18px #173f2a08;padding:12px 15px}.message.mine{border-radius:17px 17px 17px 4px;background:#e3f7eb;border-color:#ccebd8}.message-name{font-size:11px}.message-text{font-size:13px;line-height:1.95}
+.composer{background:#fff;padding:14px 16px;border-top:1px solid #e5eee8}.composer input{border-radius:14px;background:#fbfdfb}.composer button{background:linear-gradient(135deg,#15966a,#0b704d);border-radius:14px;box-shadow:0 7px 17px #0e765326}
+.p-tools{display:flex;gap:8px;align-items:center;padding:11px 16px;border-bottom:1px solid #e2ece5;background:#fbfdfc;flex-wrap:wrap}.p-tools input{flex:1;min-width:120px;border:1px solid #dfeae3;border-radius:11px;padding:10px 12px;font:12px Vazirmatn,Tahoma,sans-serif;outline:none}.p-tools button{border:1px solid #dfebe3;background:#fff;color:#667c70;border-radius:10px;padding:8px 11px;font:11px Vazirmatn,Tahoma,sans-serif}.p-tools button.active{background:#e3f7eb;color:#0e7653;border-color:#bfe7cf;font-weight:700}.p-star{float:left;margin-right:7px;border:0;background:transparent;color:#b2a06a;font-size:13px;padding:0}.p-star.on{color:#d49a00}
+body.dark{background:#101a16;color:#e5f1e9}body.dark .app,body.dark .main,body.dark .sidebar,body.dark .header,body.dark .composer{background:#18251f;color:#e5f1e9}body.dark .messages{background:#142019}body.dark .message{background:#1f3026;color:#e5f1e9;border-color:#33483b}body.dark .message.mine{background:#1d4731}body.dark .p-tools{background:#17241c}body.dark .p-tools input,body.dark .p-tools button{background:#1e2e25;color:#e5f1e9;border-color:#33483b}
+@media(max-width:700px){.app{padding:0}.main{border-radius:0;min-height:100vh}.header{padding:15px}.messages{padding:14px}.p-tools{padding:9px}.p-tools input{width:100%;flex-basis:100%}}
 </style>
 </head>
 <body>
@@ -62,7 +84,7 @@ body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#eef8f2;color:#173b
 <div class="header-title">گفتگوی همکاران</div>
 <div class="live" id="connectionStatus">در حال اتصال...</div>
 </header>
-<section class="messages" id="messages"><div class="empty">در حال دریافت پیام‌ها...</div></section>
+<div class="p-tools"><input id="pSearch" type="search" placeholder="جست‌وجو در پیام‌ها..."><button class="active" id="pAll">همه پیام‌ها</button><button id="pStarred">⭐ نشان‌شده</button><button id="pTheme">◐ حالت شب</button><button id="pEmoji">☺ ایموجی</button></div><section class="messages" id="messages"><div class="empty">در حال دریافت پیام‌ها...</div></section>
 <div class="composer">
 <input id="messageInput" type="text" maxlength="2000" placeholder="پیام خود را بنویسید..." autocomplete="off">
 <button id="sendButton" type="button">ارسال</button>
@@ -124,7 +146,7 @@ function showMessage(message){
  if(message.employee===employeeNumber)div.classList.add("mine");
  const time=new Date(message.created_at).toLocaleTimeString("fa-IR",{hour:"2-digit",minute:"2-digit"});
  div.innerHTML='<div class="message-name">'+escapeHtml(message.name)+'</div><div class="message-text">'+escapeHtml(message.message)+'</div><div class="message-time">'+time+"</div>";
- messagesBox.appendChild(div);messagesBox.scrollTop=messagesBox.scrollHeight;
+ const star=document.createElement("button");star.className="p-star";star.type="button";star.textContent="☆";star.title="نشان‌کردن پیام";const key="peyvand_starred_v1";let saved=[];try{saved=JSON.parse(localStorage.getItem(key)||"[]")}catch(e){}if(saved.includes(String(message.id))){star.classList.add("on");star.textContent="★"}star.onclick=function(){let a=[];try{a=JSON.parse(localStorage.getItem(key)||"[]")}catch(e){}const id=String(message.id);a=a.includes(id)?a.filter(x=>x!==id):a.concat(id);localStorage.setItem(key,JSON.stringify(a));star.classList.toggle("on",a.includes(id));star.textContent=a.includes(id)?"★":"☆";applyMessageFilters()};div.querySelector(".message-name").appendChild(star);messagesBox.appendChild(div);messagesBox.scrollTop=messagesBox.scrollHeight;
 }
 
 async function loadMessages(){
@@ -138,7 +160,7 @@ async function loadMessages(){
 async function sendMessage(){
  const text=messageInput.value.trim();if(!text)return;
  sendButton.disabled=true;
- const newMessage={room:"general",name:"",employee:"",message:text};
+ const newMessage={room:"general",name:document.getElementById("userName").textContent||"همکار",employee:document.getElementById("employeeNumber").textContent.replace("پرسنلی: ","")||"",message:text};
  const {data,error}=await supabaseClient.from("peyvand_messages").insert(newMessage).select().single();
  if(error){console.error("SEND ERROR:",error);alert("پیام ارسال نشد:\n"+error.message);sendButton.disabled=false;return}
  if(data)showMessage(data);
@@ -146,7 +168,7 @@ async function sendMessage(){
 }
 
 sendButton.addEventListener("click",sendMessage);
-messageInput.addEventListener("keydown",function(event){if(event.key==="Enter"){event.preventDefault();sendMessage()}});
+messageInput.addEventListener("keydown",function(event){if(event.key==="Enter"&&!event.shiftKey){event.preventDefault();sendMessage()}});
 
 const channel=supabaseClient.channel("peyvand-live-chat").on("postgres_changes",{event:"INSERT",schema:"public",table:"peyvand_messages",filter:"room=eq.general"},function(payload){
  console.log("REALTIME:",payload);showMessage(payload.new);
