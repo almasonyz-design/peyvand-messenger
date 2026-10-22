@@ -56,6 +56,63 @@ body{font-family:Vazirmatn,Tahoma,sans-serif;background:radial-gradient(ellipse 
 .p-tools{display:flex;gap:8px;align-items:center;padding:11px 16px;border-bottom:1px solid #e2ece5;background:#fbfdfc;flex-wrap:wrap}.p-tools input{flex:1;min-width:120px;border:1px solid #dfeae3;border-radius:11px;padding:10px 12px;font:12px Vazirmatn,Tahoma,sans-serif;outline:none}.p-tools button{border:1px solid #dfebe3;background:#fff;color:#667c70;border-radius:10px;padding:8px 11px;font:11px Vazirmatn,Tahoma,sans-serif}.p-tools button.active{background:#e3f7eb;color:#0e7653;border-color:#bfe7cf;font-weight:700}.p-star{float:left;margin-right:7px;border:0;background:transparent;color:#b2a06a;font-size:13px;padding:0}.p-star.on{color:#d49a00}.p-action{border:0;background:transparent;color:#75887c;font:10px Vazirmatn,Tahoma,sans-serif;padding:2px 5px;margin-right:5px}.p-action:hover{color:#0e7653;text-decoration:underline}
 body.dark{background:#101a16;color:#e5f1e9}body.dark .app,body.dark .main,body.dark .sidebar,body.dark .header,body.dark .composer{background:#18251f;color:#e5f1e9}body.dark .messages{background:#142019}body.dark .message{background:#1f3026;color:#e5f1e9;border-color:#33483b}body.dark .message.mine{background:#1d4731}body.dark .p-tools{background:#17241c}body.dark .p-tools input,body.dark .p-tools button{background:#1e2e25;color:#e5f1e9;border-color:#33483b}
 @media(max-width:700px){.app{padding:0}.main{border-radius:0;min-height:100vh}.header{padding:15px}.messages{padding:14px}.p-tools{padding:9px}.p-tools input{width:100%;flex-basis:100%}}
+
+/* Peyvand UI refresh — Telegram-inspired, original brand styling */
+:root{color-scheme:light;--p-blue:#168acd;--p-blue-dark:#0879b8;--p-bg:#eaf2f7;--p-line:#e4ebf0;--p-text:#172b3a;--p-muted:#718494;--p-green:#168b69}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Vazirmatn,Tahoma,sans-serif}
+body{background:linear-gradient(145deg,#dcebf3,#f3f7fa 55%,#e6f0f5);color:var(--p-text)}
+.app{width:min(1440px,100%);height:100dvh;min-height:520px;max-width:none;margin:0 auto;padding:0;gap:0;background:#fff;border:1px solid #d9e5ed;box-shadow:0 12px 50px #1d466019;overflow:hidden}
+.sidebar{width:340px;flex:0 0 340px;order:2;background:#fff;padding:0;border:0;border-left:1px solid var(--p-line);border-radius:0;box-shadow:none;display:flex;flex-direction:column;min-width:0}
+.sidebar .logo{font-size:25px;text-align:right;margin:0;padding:18px 20px 4px;color:#1686c5;display:flex;align-items:center;gap:10px}
+.sidebar .logo:before{content:"پ";display:grid;place-items:center;width:40px;height:40px;border-radius:50%;font-size:22px;color:white;background:linear-gradient(145deg,#34a9e7,#087ab7);box-shadow:0 4px 12px #168acd30}
+.sidebar .subtitle{font-size:11px;text-align:right;color:#8a9aa7;margin:0;padding:0 70px 16px}
+.user-box{margin:0 12px 12px;background:#f4f8fb;border:1px solid #e7eef3;border-radius:16px;padding:12px}
+.user-name{font-size:14px;color:#1d3445;margin-bottom:5px}
+.employee{font-size:11px;color:#718494}
+.status{font-size:11px;color:#168b69;margin-top:9px}
+.account-btn{font-size:11px;border-radius:10px;padding:10px;margin-top:8px}
+.account-btn.admin{background:#168acd}.account-btn.admin:hover{background:#0879b8}
+.account-btn.logout{background:#fff1f0;color:#bf4540;border:1px solid #f5d5d2}.account-btn.logout:hover{background:#ffe6e3}
+.chat-title{margin:0 12px 12px;background:#e7f5fd;color:#0879b8;border:1px solid #d5ecfa;box-shadow:none;border-radius:12px;padding:13px 15px;font-size:12px}
+.main{order:1;min-width:0;background:#f5f8fb;border:0;border-radius:0;box-shadow:none;overflow:hidden}
+.header{min-height:68px;height:68px;padding:0 22px;background:#fff;border-bottom:1px solid var(--p-line);gap:12px}
+.header-title{font-size:15px;color:#203b4d}
+.live{margin-right:auto;background:#eaf8f2;color:#168b69!important;border:1px solid #d6f0e5;padding:7px 10px;border-radius:99px;font-size:10px;white-space:nowrap}
+.p-tools{padding:10px 16px;background:#fff;border-bottom:1px solid var(--p-line);gap:7px}
+.p-tools input{min-height:38px;background:#f2f6f9;border:1px solid transparent;border-radius:12px;font-size:12px;color:#203b4d}
+.p-tools input:focus{background:#fff;border-color:#8dc8e9;box-shadow:0 0 0 3px #168acd12}
+.p-tools button{border:1px solid #e1eaf0;background:#f7fafc;color:#718494;border-radius:10px;padding:8px 10px;font-size:10px;transition:.15s}
+.p-tools button.active{background:#e4f4fd;color:#0879b8;border-color:#c5e8fa}
+.messages{background-color:#eaf2f7;background-image:radial-gradient(circle at 20% 20%,#ffffffaa 1px,transparent 2px),radial-gradient(circle at 80% 70%,#cbdde788 1px,transparent 2px);background-size:34px 34px,48px 48px;padding:22px clamp(14px,3vw,34px)}
+.empty{max-width:280px;margin:35px auto;padding:18px 22px;background:#ffffffd9;border:1px solid #dce8ef;border-radius:16px;color:#6d8291;font-size:12px;line-height:1.9}
+.message{position:relative;max-width:min(74%,620px);margin:0 0 12px;background:#fff;border:1px solid #e0eaf0;border-radius:16px 16px 4px 16px;padding:11px 14px;box-shadow:0 2px 4px #18374a08}
+.message.mine{margin-right:auto;margin-left:0;background:#dff4ff;border-color:#c6e8f8;border-radius:16px 16px 16px 4px}
+.message-name{font-size:11px;color:#1386c4;margin-bottom:5px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.message-text{font-size:13px;line-height:1.9;color:#213849;overflow-wrap:anywhere}
+.message-time{font-size:10px;color:#8a9aa7;text-align:left;margin-top:5px}
+.p-star,.p-action{font-size:10px}
+.composer{padding:13px 16px;background:#fff;border-top:1px solid var(--p-line);gap:10px;align-items:center}
+.composer input{min-width:0;min-height:44px;border:1px solid #e0e9ef;background:#f6f9fb;border-radius:24px;padding:12px 18px;font-size:13px}
+.composer input:focus{background:#fff;border-color:#78bfe5;box-shadow:0 0 0 3px #168acd12}
+.composer button{min-height:42px;min-width:82px;background:linear-gradient(135deg,#229bd8,#087bb9);border-radius:22px;padding:0 20px;font-size:12px;box-shadow:0 4px 12px #168acd25}
+.composer button:hover:not(:disabled){background:#0879b8}
+body.dark{background:#111d28;color:#e5edf4}
+body.dark .app,body.dark .main{background:#172633}
+body.dark .sidebar,body.dark .header,body.dark .composer,body.dark .p-tools{background:#1c2d3b;color:#e5edf4;border-color:#2a4050}
+body.dark .sidebar .logo,body.dark .header-title{color:#e5edf4}
+body.dark .sidebar .subtitle,body.dark .employee,body.dark .message-time{color:#9bb0bf}
+body.dark .user-box,body.dark .p-tools input,body.dark .p-tools button{background:#243847;color:#e5edf4;border-color:#354c5d}
+body.dark .chat-title,body.dark .p-tools button.active{background:#203e51;color:#82cef5;border-color:#2d607c}
+body.dark .messages{background-color:#13232f;background-image:radial-gradient(circle at 20% 20%,#ffffff09 1px,transparent 2px),radial-gradient(circle at 80% 70%,#cbdde711 1px,transparent 2px)}
+body.dark .message{background:#203543;color:#e5edf4;border-color:#304b5c}
+body.dark .message.mine{background:#1c4357;border-color:#285a72}
+body.dark .message-text{color:#e5edf4}
+body.dark .composer input{background:#243847;color:#e5edf4;border-color:#354c5d}
+@media(min-width:1000px){.app{height:100dvh}.messages{padding:26px clamp(24px,4vw,54px)}}
+@media(max-width:700px){.app{height:100dvh;min-height:0}.sidebar{display:none}.main{width:100%;min-height:0}.header{min-height:60px;height:60px;padding:0 14px}.p-tools{padding:8px;gap:5px}.p-tools input{flex-basis:100%;width:100%}.p-tools button{flex:1;padding:9px 5px}.messages{padding:13px 11px}.message{max-width:88%;padding:10px 12px}.message-text{font-size:13px}.composer{padding:10px;gap:7px}.composer input{font-size:12px;min-height:42px}.composer button{min-width:68px;padding:0 13px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+
 </style>
 </head>
 <body>
