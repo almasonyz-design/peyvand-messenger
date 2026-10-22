@@ -26,6 +26,14 @@ table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px s
 <main>
   <div id="status" class="card">در حال بررسی دسترسی...</div>
 
+  <section id="accessRequestsPanel" class="card hidden">
+    <h2>🔔 درخواست‌های ورود</h2>
+    <p class="muted">درخواست‌های جدید تا زمان تصمیم مالک در انتظار می‌مانند. پس از تأیید، رمز موقت نمایش داده می‌شود؛ آن را فقط از راه امن به همکار برسان.</p>
+    <div class="actions" style="margin-bottom:12px"><button id="refreshAccessRequestsBtn" type="button">به‌روزرسانی درخواست‌ها</button></div>
+    <div id="accessRequestsTable">در حال بارگذاری...</div>
+    <div id="accessRequestActionResult" style="margin-top:12px"></div>
+  </section>
+
 
   <section id="addUserPanel" class="card hidden">
     <h2>➕ افزودن همکار</h2>
@@ -69,6 +77,9 @@ const ownerPanel=document.getElementById("ownerPanel");
 const usersPanel=document.getElementById("usersPanel");
 const messagesPanel=document.getElementById("messagesPanel");
 const auditPanel=document.getElementById("auditPanel");
+const accessRequestsPanel=document.getElementById("accessRequestsPanel");
+const accessRequestsTable=document.getElementById("accessRequestsTable");
+const accessRequestActionResult=document.getElementById("accessRequestActionResult");
 
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
 function showError(msg){statusBox.innerHTML='<span class="error">'+esc(msg)+'</span>';}
@@ -166,6 +177,59 @@ async function loadUsers(role){
     else await loadUsers(role);
   });
 }
+
+async function loadAccessRequests(){
+  accessRequestsTable.innerHTML='<p class="muted">در حال دریافت درخواست‌ها...</p>';
+  const {data,error}=await supabaseClient.from("peyvand_access_requests")
+    .select("id,full_name,employee_number,phone,status,created_at")
+    .eq("status","pending").order("created_at",{ascending:true});
+  if(error){accessRequestsTable.innerHTML='<p class="error">خطا در دریافت درخواست‌ها: '+esc(error.message)+'</p>';return;}
+  const rows=data||[];
+  if(!rows.length){accessRequestsTable.innerHTML='<p class="muted">درخواست تأییدنشده‌ای وجود ندارد.</p>';return;}
+  let html='<table><tr><th>نام</th><th>پرسنلی</th><th>همراه</th><th>زمان درخواست</th><th>تصمیم</th></tr>';
+  for(const r of rows){
+    html+='<tr><td>'+esc(r.full_name)+'</td><td>'+esc(r.employee_number)+'</td><td dir="ltr">'+esc(r.phone)+'</td><td>'+new Date(r.created_at).toLocaleString("fa-IR")+'</td><td><div class="actions"><button data-approve-request="'+esc(r.id)+'">تأیید و ساخت حساب</button><button class="danger" data-reject-request="'+esc(r.id)+'">رد درخواست</button></div></td></tr>';
+  }
+  html+='</table>';accessRequestsTable.innerHTML=html;
+  document.querySelectorAll("[data-approve-request]").forEach(b=>b.onclick=()=>approveAccessRequest(b.dataset.approveRequest,b));
+  document.querySelectorAll("[data-reject-request]").forEach(b=>b.onclick=()=>rejectAccessRequest(b.dataset.rejectRequest,b));
+}
+
+async function approveAccessRequest(id,button){
+  if(!confirm("درخواست را تأیید و برای این همکار حساب کاربری بسازم؟"))return;
+  const rowResult=await supabaseClient.from("peyvand_access_requests")
+    .select("id,full_name,employee_number,phone,status").eq("id",id).eq("status","pending").maybeSingle();
+  if(rowResult.error||!rowResult.data){alert("درخواست دیگر در انتظار نیست یا دریافت آن ممکن نشد.");await loadAccessRequests();return;}
+  const r=rowResult.data;
+  button.disabled=true;button.textContent="در حال ساخت حساب...";
+  accessRequestActionResult.innerHTML="";
+  try{
+    const {data,error}=await supabaseClient.functions.invoke("create-peyvand-user",{
+      body:{full_name:r.full_name,employee_number:r.employee_number,phone:r.phone,role:"user"}
+    });
+    if(error)throw new Error(error.message||"ساخت حساب انجام نشد.");
+    if(!data?.success)throw new Error(data?.error||"ساخت حساب انجام نشد.");
+    const {error:updateError}=await supabaseClient.from("peyvand_access_requests")
+      .update({status:"approved",reviewed_at:new Date().toISOString()}).eq("id",id).eq("status","pending");
+    if(updateError)throw new Error("حساب ساخته شد، اما وضعیت درخواست ذخیره نشد؛ پیش از تلاش دوباره حساب‌ها را بررسی کن. "+updateError.message);
+    accessRequestActionResult.innerHTML='<div class="card" style="margin:0;background:#eaf7ef"><strong class="ok">✅ درخواست تأیید و حساب ساخته شد.</strong><p>نام: '+esc(data.full_name||r.full_name)+'</p><p>شماره پرسنلی: '+esc(data.employee_number||r.employee_number)+'</p><p>شماره همراه: '+esc(data.phone||r.phone)+'</p><p>رمز موقت: <strong dir="ltr">'+esc(data.temporary_password||"در پاسخ سرویس موجود نیست")+'</strong></p><p class="muted">رمز را فقط از راه خصوصی و امن به صاحب حساب بده. ورود با شماره همراه به‌تنهایی فعال نشده است.</p></div>';
+    await loadAccessRequests();
+  }catch(e){
+    accessRequestActionResult.innerHTML='<p class="error">تأیید انجام نشد: '+esc(e.message||"خطای نامشخص")+'</p>';
+    button.disabled=false;button.textContent="تلاش دوباره";
+  }
+}
+
+async function rejectAccessRequest(id,button){
+  if(!confirm("این درخواست رد شود؟"))return;
+  button.disabled=true;
+  const {error}=await supabaseClient.from("peyvand_access_requests")
+    .update({status:"rejected",reviewed_at:new Date().toISOString()}).eq("id",id).eq("status","pending");
+  if(error){alert("رد درخواست انجام نشد: "+error.message);button.disabled=false;return;}
+  accessRequestActionResult.innerHTML='<p class="ok">درخواست رد شد.</p>';
+  await loadAccessRequests();
+}
+document.getElementById("refreshAccessRequestsBtn").onclick=loadAccessRequests;
 
 async function loadAuditLogs(){
   const box=document.getElementById("auditTable");
@@ -265,7 +329,7 @@ async function loadRoles(){
     statusBox.innerHTML='<span class="ok">دسترسی تأیید شد.</span>';
     usersPanel.classList.remove("hidden"); messagesPanel.classList.remove("hidden"); if(role==="owner") document.getElementById("addUserPanel").classList.remove("hidden");
     await loadUsers(role); await loadMessages();
-    if(role==="owner"){ownerPanel.classList.remove("hidden"); auditPanel.classList.remove("hidden"); await loadRoles(); await loadAuditLogs();}
+    if(role==="owner"){ownerPanel.classList.remove("hidden"); auditPanel.classList.remove("hidden"); accessRequestsPanel.classList.remove("hidden"); await loadRoles(); await loadAuditLogs(); await loadAccessRequests();}
   }catch(e){showError(e.message||"خطا در بررسی دسترسی");}
 })();
 
