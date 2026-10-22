@@ -91,9 +91,26 @@ form button[type=submit]{min-height:47px;margin-top:17px;border-radius:11px;back
     <input id="password" type="password" placeholder="رمز عبور" required>
 
     <button id="loginButton" type="submit">ورود به پیوند</button>
+    <button id="requestAccessBtn" class="secondary" type="button">درخواست دسترسی جدید</button>
     <div id="errorBox" class="error"></div>
     <div id="successBox" class="success"></div>
   </form>
+
+  <section id="accessRequestPanel" class="panel" style="display:none">
+    <h3>درخواست دسترسی به پیوند</h3>
+    <p class="muted">درخواست برای مالک سیستم ارسال می‌شود. تا زمان تأیید مالک، امکان ورود وجود ندارد.</p>
+    <form id="accessRequestForm">
+      <label for="requestName">نام و نام خانوادگی</label>
+      <input id="requestName" required maxlength="120" autocomplete="name" placeholder="نام و نام خانوادگی">
+      <label for="requestEmployee">شماره پرسنلی</label>
+      <input id="requestEmployee" required maxlength="40" placeholder="شماره پرسنلی">
+      <label for="requestPhone">شماره همراه</label>
+      <input id="requestPhone" required maxlength="20" inputmode="tel" placeholder="مثلاً 09121234567">
+      <button id="sendAccessRequestBtn" type="submit">ارسال درخواست برای تأیید</button>
+      <button id="cancelAccessRequestBtn" class="secondary" type="button">بازگشت به ورود</button>
+      <div id="requestResult" class="muted" role="status" aria-live="polite"></div>
+    </form>
+  </section>
 
   <section id="ownerPanel" class="panel">
     <h3>👑 مدیریت مدیران</h3>
@@ -125,6 +142,10 @@ const userSelect=document.getElementById("userSelect");
 const addAdminBtn=document.getElementById("addAdminBtn");
 const enterBtn=document.getElementById("enterBtn");
 const logoutBtn=document.getElementById("logoutBtn");
+const requestAccessBtn=document.getElementById("requestAccessBtn");
+const accessRequestPanel=document.getElementById("accessRequestPanel");
+const accessRequestForm=document.getElementById("accessRequestForm");
+const requestResult=document.getElementById("requestResult");
 
 let currentUser=null;
 let currentRole=null;
@@ -221,6 +242,43 @@ addAdminBtn.addEventListener("click",async()=>{
 });
 
 enterBtn.addEventListener("click",()=>window.location.href="chat.html");
+
+requestAccessBtn.addEventListener("click",()=>{
+  hideMessages();
+  form.style.display="none";
+  accessRequestPanel.style.display="block";
+  requestResult.textContent="";
+});
+document.getElementById("cancelAccessRequestBtn").addEventListener("click",()=>{
+  accessRequestPanel.style.display="none";
+  form.style.display="flex";
+  requestResult.textContent="";
+});
+accessRequestForm.addEventListener("submit",async event=>{
+  event.preventDefault();
+  requestResult.textContent="";
+  const full_name=document.getElementById("requestName").value.trim();
+  const employee_number=document.getElementById("requestEmployee").value.trim();
+  const rawPhone=document.getElementById("requestPhone").value.trim();
+  const phone=rawPhone.replace(/[\\s()-]/g,"");
+  if(!full_name||!employee_number||!phone){requestResult.textContent="همه فیلدها را تکمیل کن.";return;}
+  if(!/^[+0-9]{8,16}$/.test(phone)){requestResult.textContent="شماره همراه معتبر وارد کن.";return;}
+  const btn=document.getElementById("sendAccessRequestBtn");
+  btn.disabled=true;btn.textContent="در حال ارسال...";
+  try{
+    const {error}=await supabaseClient.from("peyvand_access_requests").insert({
+      full_name,employee_number,phone
+    });
+    if(error){
+      if(error.code==="23505") throw new Error("برای این شماره پرسنلی درخواست قبلاً ثبت شده است.");
+      throw error;
+    }
+    accessRequestForm.reset();
+    requestResult.textContent="درخواست ثبت شد و برای بررسی در پنل مدیریت نمایش داده می‌شود. تا تأیید مالک سیستم امکان ورود ندارید.";
+  }catch(e){
+    requestResult.textContent="درخواست ثبت نشد: "+(e.message||"خطای نامشخص");
+  }finally{btn.disabled=false;btn.textContent="ارسال درخواست برای تأیید";}
+});
 
 logoutBtn.addEventListener("click",async()=>{
   await supabaseClient.auth.signOut();
