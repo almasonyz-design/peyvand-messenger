@@ -14,6 +14,42 @@ body:before,body:after{content:"";position:fixed;border:1px solid #1b8b5a16;bord
 label{font-size:12px;color:#3c5949}input,select{padding:14px 15px;border:1px solid #dce9e0;border-radius:14px;background:#fbfdfb;font-size:13px;transition:.2s}input:focus,select:focus{border-color:#61b98a;box-shadow:0 0 0 4px #2ba66b13}
 button{border-radius:14px;background:linear-gradient(135deg,#15966a,#0b704d);font-size:13px;box-shadow:0 8px 20px #0e765323;transition:transform .18s}button:hover{transform:translateY(-1px)}.secondary{background:#eef8f2;box-shadow:none}.danger{background:#b42318;box-shadow:none}
 @media(max-width:480px){body{padding:12px}.login-box{padding:25px 20px;border-radius:23px}.logo:before{width:58px;height:58px;border-radius:19px}}
+
+/* Peyvand sign-in refresh */
+:root{--p-blue:#168acd;--p-blue-dark:#0879b8;--p-ink:#183345;--p-muted:#718494;--p-border:#e1ebf1}
+*{box-sizing:border-box}
+html{min-height:100%}
+body{min-height:100dvh;margin:0;padding:24px;display:grid;place-items:center;overflow-x:hidden;background:radial-gradient(ellipse at 12% 8%,#d5effb 0,transparent 33%),radial-gradient(ellipse at 88% 90%,#d9f1e8 0,transparent 32%),linear-gradient(140deg,#f1f7fb,#eaf3f7);color:var(--p-ink)}
+body:before,body:after{border-color:#168acd12}
+.login-box{position:relative;z-index:1;width:min(100%,460px);padding:clamp(26px,5vw,42px);border-radius:28px;background:#ffffffed;border:1px solid #ffffff;box-shadow:0 24px 75px #244d6417,0 3px 12px #244d6409;backdrop-filter:blur(24px)}
+.logo{font-size:0;font-weight:800;color:#168acd;text-align:center;letter-spacing:-1px}
+.logo:before{content:"پ";width:68px;height:68px;margin:0 auto 14px;display:grid;place-items:center;border-radius:23px;font-size:36px;color:white;background:linear-gradient(145deg,#36a9e5,#0878b5);box-shadow:0 10px 26px #168acd30}
+.logo:after{content:"پیوند";display:block;font-size:34px;letter-spacing:0}
+.subtitle{margin:7px 0 27px;text-align:center;font-size:13px;color:#718494}
+.subtitle:after{width:44px;height:3px;background:#80c9ee;margin:15px auto 0}
+form{display:flex;flex-direction:column;gap:8px}
+label{margin-top:7px;font-size:12px;font-weight:600;color:#40596a}
+input,select{width:100%;min-height:46px;padding:12px 14px;border:1px solid #dfe9ef;border-radius:13px;background:#f7fafc;color:#183345;font-family:inherit;font-size:13px;outline:none;transition:border-color .18s,box-shadow .18s,background .18s}
+input::placeholder{color:#9aabb7}
+input:focus,select:focus{background:#fff;border-color:#79c2e8;box-shadow:0 0 0 4px #168acd12}
+button{min-height:46px;margin-top:13px;border:0;border-radius:13px;background:linear-gradient(135deg,#229bd8,#087bb9);color:#fff;font-family:inherit;font-size:13px;font-weight:700;box-shadow:0 8px 20px #168acd26;cursor:pointer;transition:transform .18s,box-shadow .18s}
+button:hover{transform:translateY(-1px);box-shadow:0 10px 24px #168acd32}
+button:disabled{opacity:.6;cursor:not-allowed;transform:none}
+button.secondary{background:#e9f5fb;color:#0879b8;box-shadow:none}
+button.danger{background:#fff0ef;color:#b42318;box-shadow:none}
+.muted,.info{font-size:11px;line-height:1.9;color:#7c8f9d}
+.info{margin-top:18px;padding:12px 13px;text-align:center;background:#f0f7fb;border:1px solid #e4eef4;border-radius:12px}
+.error,.success{display:none;margin-top:10px;padding:11px 13px;border-radius:11px;font-size:12px;line-height:1.8}
+.error{background:#fff1f0;color:#b42318;border:1px solid #f5d8d5}.success{background:#eaf8f1;color:#13734f;border:1px solid #d2efdf}
+.panel{margin-top:20px;padding:16px;background:#f7fafc;border:1px solid #e4edf3;border-radius:16px}
+.panel h3{font-size:15px;color:#1686c5;margin:0 0 10px}
+.user-row{padding:12px 0;border-bottom:1px solid #e3edf2;display:flex;align-items:center;gap:10px;justify-content:space-between}
+.user-name{font-size:12px;color:#203b4d}.user-meta{font-size:10px;color:#7b8e9b;margin-top:4px}
+.badge{display:inline-block;padding:3px 7px;border-radius:99px;background:#e0f3fc;color:#0879b8;font-size:10px}
+.user-actions button{margin:0;min-height:34px;padding:7px 10px;font-size:10px}
+hr{border:0;border-top:1px solid #e1ebf1;margin:15px 0}
+@media(max-width:480px){body{padding:12px}.login-box{padding:25px 20px;border-radius:22px}.logo:before{width:58px;height:58px;border-radius:20px}.logo:after{font-size:30px}.subtitle{margin-bottom:22px}}
+
 </style>
 </head>
 <body>
