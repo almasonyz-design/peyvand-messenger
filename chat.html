@@ -148,12 +148,30 @@ const SUPABASE_KEY="sb_publishable__hlPVmThO6PDb-_LSvMzWw_uAeHKMxs";
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let currentUser=null;
 let currentRole="user";
+let demoMode=false;
 
 async function requireSession(){
  const {data:{session},error}=await supabaseClient.auth.getSession();
  if(error||!session){
   localStorage.removeItem("peyvand_name");localStorage.removeItem("peyvand_employee");localStorage.removeItem("peyvand_user_id");
-  window.location.replace("index.html");return false;
+  demoMode=true;
+  currentUser=null;currentRole="guest";
+  userName="بازدیدکننده";employeeNumber="حالت مشاهده";
+  document.getElementById("userName").textContent=userName;
+  document.getElementById("employeeNumber").textContent=employeeNumber;
+  document.getElementById("connectionStatus").textContent="● پیش‌نمایش برنامه";
+  document.getElementById("connectionStatus").style.color="#168b69";
+  document.getElementById("messageInput").disabled=true;
+  document.getElementById("messageInput").placeholder="برای ارسال پیام باید وارد حساب شوید";
+  document.getElementById("sendButton").disabled=true;
+  document.getElementById("sendButton").textContent="فقط مشاهده";
+  document.getElementById("logoutButton").textContent="ورود همکاران";
+  document.getElementById("logoutButton").onclick=function(){window.location.href="index.html?login=1"};
+  const empty=document.getElementById("messages");
+  empty.innerHTML='<div class="empty" style="max-width:560px;margin:10vh auto;padding:32px 24px;text-align:center"><div style="font-size:42px;margin-bottom:12px">💚</div><h2 style="margin:0 0 10px;color:#087b52">به پیوند خوش آمدید</h2><p style="line-height:1.9;margin:0 0 14px">شما در حالت پیش‌نمایش هستید. می‌توانید ظاهر محیط پیام‌رسان را ببینید؛ برای گفتگو، ارسال پیام و امکانات مدیریتی باید با حساب تأییدشده وارد شوید.</p><button type="button" id="demoLoginButton" class="secondary" style="padding:11px 18px;border-radius:14px;font:inherit;cursor:pointer">ورود همکاران</button></div>';
+  document.getElementById("demoLoginButton").addEventListener("click",()=>window.location.href="index.html?login=1");
+  document.getElementById("adminButton").style.display="none";
+  return true;
  }
  currentUser=session.user;
  const {data:employee,error:employeeError}=await supabaseClient.from("peyvand_employees").select("full_name,employee_number,email,is_active").eq("user_id",currentUser.id).maybeSingle();
@@ -176,6 +194,7 @@ async function requireSession(){
 }
 
 document.getElementById("logoutButton").addEventListener("click",async function(){
+ if(demoMode){window.location.href="index.html?login=1";return;}
  this.disabled=true;this.textContent="در حال خروج...";
  await supabaseClient.auth.signOut();
  localStorage.removeItem("peyvand_name");localStorage.removeItem("peyvand_employee");localStorage.removeItem("peyvand_user_id");
@@ -253,6 +272,7 @@ async function loadOlderMessages(){
  btn.textContent="بارگذاری پیام‌های قدیمی‌تر";btn.disabled=false;loadingOlderMessages=false;
 }
 async function sendMessage(){
+ if(demoMode){alert("برای ارسال پیام باید با حساب تأییدشده وارد شوید.");return;}
  const text=messageInput.value.trim();if(!text)return;
  sendButton.disabled=true;
  const newMessage={room:"general",name:document.getElementById("userName").textContent||"همکار",employee:document.getElementById("employeeNumber").textContent.replace("پرسنلی: ","")||"",message:text};
@@ -265,21 +285,25 @@ async function sendMessage(){
 sendButton.addEventListener("click",sendMessage);
 messageInput.addEventListener("keydown",function(event){if(event.key==="Enter"&&!event.shiftKey){event.preventDefault();sendMessage()}});
 
-const channel=supabaseClient.channel("peyvand-live-chat").on("postgres_changes",{event:"INSERT",schema:"public",table:"peyvand_messages",filter:"room=eq.general"},function(payload){
- console.log("REALTIME:",payload);showMessage(payload.new);
-}).subscribe(function(status){
- console.log("REALTIME STATUS:",status);
- if(status==="SUBSCRIBED"){connectionStatus.textContent="● اتصال زنده برقرار است";connectionStatus.style.color="#198754"}
- else{connectionStatus.textContent="● در حال اتصال...";connectionStatus.style.color="#b7791f"}
-});
+function subscribeRealtime(){
+ const channel=supabaseClient.channel("peyvand-live-chat").on("postgres_changes",{event:"INSERT",schema:"public",table:"peyvand_messages",filter:"room=eq.general"},function(payload){
+  console.log("REALTIME:",payload);showMessage(payload.new);
+ }).subscribe(function(status){
+  console.log("REALTIME STATUS:",status);
+  if(status==="SUBSCRIBED"){connectionStatus.textContent="● اتصال زنده برقرار است";connectionStatus.style.color="#198754"}
+  else{connectionStatus.textContent="● در حال اتصال...";connectionStatus.style.color="#b7791f"}
+ });
+}
 
 (async function startApp(){
  const ok=await requireSession();if(!ok)return;
+ if(demoMode)return;
  if(currentRole==="owner"||currentRole==="admin")document.getElementById("adminButton").style.display="block";
  await loadMessages();
+ subscribeRealtime();
  setInterval(async function(){
   const {data:employee}=await supabaseClient.from("peyvand_employees").select("is_active").eq("user_id",currentUser.id).maybeSingle();
-  if(!employee||!employee.is_active){await supabaseClient.auth.signOut();localStorage.clear();window.location.replace("index.html")}
+  if(!employee||!employee.is_active){await supabaseClient.auth.signOut();localStorage.removeItem("peyvand_name");localStorage.removeItem("peyvand_employee");localStorage.removeItem("peyvand_user_id");window.location.replace("index.html")}
  },60000);
 })();
 
