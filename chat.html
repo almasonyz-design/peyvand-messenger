@@ -190,14 +190,14 @@ const connectionStatus=document.getElementById("connectionStatus");
 
 function escapeHtml(text){const div=document.createElement("div");div.textContent=text;return div.innerHTML}
 
-function showMessage(message){
+function showMessage(message,prepend=false){
  if(document.querySelector('[data-message-id="'+message.id+'"]'))return;
  const empty=messagesBox.querySelector(".empty");if(empty)empty.remove();
  const div=document.createElement("div");div.className="message";div.setAttribute("data-message-id",message.id);
  if(message.employee===employeeNumber)div.classList.add("mine");
  const time=new Date(message.created_at).toLocaleTimeString("fa-IR",{hour:"2-digit",minute:"2-digit"});
  div.innerHTML='<div class="message-name">'+escapeHtml(message.name)+'</div><div class="message-text">'+escapeHtml(message.message)+'</div><div class="message-time">'+time+"</div>";
- const star=document.createElement("button");star.className="p-star";star.type="button";star.textContent="☆";star.title="نشان‌کردن پیام";const key="peyvand_starred_v1";let saved=[];try{saved=JSON.parse(localStorage.getItem(key)||"[]")}catch(e){}if(saved.includes(String(message.id))){star.classList.add("on");star.textContent="★"}star.onclick=function(){let a=[];try{a=JSON.parse(localStorage.getItem(key)||"[]")}catch(e){}const id=String(message.id);a=a.includes(id)?a.filter(x=>x!==id):a.concat(id);localStorage.setItem(key,JSON.stringify(a));star.classList.toggle("on",a.includes(id));star.textContent=a.includes(id)?"★":"☆";applyMessageFilters()};const reply=document.createElement("button");reply.className="p-action";reply.type="button";reply.textContent="↩ پاسخ";reply.onclick=function(){messageInput.value="↪ پاسخ به "+(message.name||"همکار")+": "+String(message.message||"").slice(0,90)+"\\n"+messageInput.value;messageInput.focus()};const copy=document.createElement("button");copy.className="p-action";copy.type="button";copy.textContent="کپی";copy.onclick=async function(){try{await navigator.clipboard.writeText(String(message.message||""));alert("متن پیام کپی شد")}catch(e){messageInput.value=String(message.message||"");messageInput.focus()}};div.querySelector(".message-name").appendChild(star);div.querySelector(".message-name").appendChild(reply);div.querySelector(".message-name").appendChild(copy);messagesBox.appendChild(div);messagesBox.scrollTop=messagesBox.scrollHeight;
+ const star=document.createElement("button");star.className="p-star";star.type="button";star.textContent="☆";star.title="نشان‌کردن پیام";const key="peyvand_starred_v1";let saved=[];try{saved=JSON.parse(localStorage.getItem(key)||"[]")}catch(e){}if(saved.includes(String(message.id))){star.classList.add("on");star.textContent="★"}star.onclick=function(){let a=[];try{a=JSON.parse(localStorage.getItem(key)||"[]")}catch(e){}const id=String(message.id);a=a.includes(id)?a.filter(x=>x!==id):a.concat(id);localStorage.setItem(key,JSON.stringify(a));star.classList.toggle("on",a.includes(id));star.textContent=a.includes(id)?"★":"☆";applyMessageFilters()};const reply=document.createElement("button");reply.className="p-action";reply.type="button";reply.textContent="↩ پاسخ";reply.onclick=function(){messageInput.value="↪ پاسخ به "+(message.name||"همکار")+": "+String(message.message||"").slice(0,90)+"\\n"+messageInput.value;messageInput.focus()};const copy=document.createElement("button");copy.className="p-action";copy.type="button";copy.textContent="کپی";copy.onclick=async function(){try{await navigator.clipboard.writeText(String(message.message||""));alert("متن پیام کپی شد")}catch(e){messageInput.value=String(message.message||"");messageInput.focus()}};div.querySelector(".message-name").appendChild(star);div.querySelector(".message-name").appendChild(reply);div.querySelector(".message-name").appendChild(copy);if(prepend){const first=messagesBox.querySelector(".message");if(first)messagesBox.insertBefore(div,first);else messagesBox.appendChild(div)}else{messagesBox.appendChild(div);messagesBox.scrollTop=messagesBox.scrollHeight}
 }
 
 let oldestLoadedMessageAt=null;
@@ -246,19 +246,7 @@ async function loadOlderMessages(){
   btn.textContent="پیام قدیمی‌تری وجود ندارد";
   btn.disabled=true;loadingOlderMessages=false;return;
  }
- const firstMessage=messagesBox.querySelector(".message");
- const fragment=document.createDocumentFragment();
- const temporary=[];
- rows.forEach(message=>{
-  if(document.querySelector('[data-message-id="'+message.id+'"]'))return;
-  const div=document.createElement("div");
-  div.className="message";div.setAttribute("data-message-id",message.id);
-  if(message.employee===employeeNumber)div.classList.add("mine");
-  const time=new Date(message.created_at).toLocaleTimeString("fa-IR",{hour:"2-digit",minute:"2-digit"});
-  div.innerHTML='<div class="message-name">'+escapeHtml(message.name||"همکار")+'</div><div class="message-text">'+escapeHtml(message.message||"")+'</div><div class="message-time">'+time+'</div>';
-  fragment.appendChild(div);temporary.push(div);
- });
- if(firstMessage)messagesBox.insertBefore(fragment,firstMessage);else messagesBox.appendChild(fragment);
+ rows.forEach(message=>showMessage(message,true));
  oldestLoadedMessageAt=rows[0].created_at;
  applyMessageFilters();
  messagesBox.scrollTop=previousTop+(messagesBox.scrollHeight-previousHeight);
