@@ -308,11 +308,13 @@ function subscribeRealtime(){
 })();
 
 supabaseClient.auth.onAuthStateChange(function(event,session){
- // An unauthenticated visitor is allowed to stay in read-only preview.
- // Only redirect after an actual sign-out event, and never redirect guests in demo mode.
- if(event==="SIGNED_OUT" && !demoMode){
-  localStorage.removeItem("peyvand_name");localStorage.removeItem("peyvand_employee");localStorage.removeItem("peyvand_user_id");
-  if(!window.location.pathname.endsWith("index.html"))window.location.replace("index.html?login=1");
+ // Do not navigate from this callback: Supabase may emit an initial auth event
+ // while the guest-preview check is still running. Redirecting here caused a loop.
+ // The explicit logout button and account-status check handle navigation safely.
+ if(event==="SIGNED_OUT"){
+  localStorage.removeItem("peyvand_name");
+  localStorage.removeItem("peyvand_employee");
+  localStorage.removeItem("peyvand_user_id");
  }
 });
 let starredOnly=false;
