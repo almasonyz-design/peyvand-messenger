@@ -115,6 +115,55 @@ body.dark .composer input{background:#243847;color:#e5edf4;border-color:#354c5d}
 
 </style>
 <link rel="stylesheet" href="peyvand-crystal.css?v=crystal-20261023">
+<style id="peyvand-navigation-css">
+/* Navigation architecture: focused menus, clear hierarchy, accessible states */
+.nav-menu-wrap{position:relative;z-index:30;flex:0 0 auto}
+.nav-menu-trigger{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:39px;padding:0 13px;border:1px solid #dce8ee;border-radius:13px;background:#f7fafc;color:#426273;font:600 12px Vazirmatn,Tahoma,sans-serif;cursor:pointer}
+.nav-menu-trigger svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.nav-menu-trigger[aria-expanded="true"]{background:#e7f5fd;color:#0879b8;border-color:#b8e2f7}
+.nav-menu{position:absolute;top:calc(100% + 9px);right:0;width:min(310px,calc(100vw - 24px));padding:8px;border:1px solid rgba(218,232,239,.96);border-radius:19px;background:rgba(255,255,255,.97);box-shadow:0 22px 65px rgba(23,61,79,.20),inset 0 1px 0 #fff;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);z-index:100;transform-origin:top right;animation:nav-menu-in .14s ease-out}
+.nav-menu[hidden],.profile-modal-backdrop[hidden],.message-context-menu[hidden]{display:none!important}
+@keyframes nav-menu-in{from{opacity:0;transform:translateY(-4px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+.nav-menu-heading{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 12px;color:#173b4c;font-size:13px;font-weight:800}
+.nav-menu-heading span{font-size:10px;font-weight:500;color:#8b9da9}
+.nav-menu button{width:100%;display:flex;align-items:center;gap:10px;min-height:49px;padding:8px 10px;margin:1px 0;border:0;border-radius:12px;background:transparent;color:#294658;text-align:right;font-family:inherit;cursor:pointer;box-shadow:none!important}
+.nav-menu button:hover:not(:disabled),.nav-menu button:focus-visible{background:#eef7fb;color:#0879b8;transform:none!important;outline:2px solid #a9d9f0;outline-offset:-2px}
+.nav-menu .nav-icon{width:32px;height:32px;display:grid;place-items:center;flex:0 0 32px;border-radius:10px;background:#edf6fa;color:#2386b7;font-size:18px}
+.nav-copy{display:flex;flex-direction:column;align-items:flex-start;gap:3px;flex:1;min-width:0}
+.nav-copy strong{font-size:12px;font-weight:700;line-height:1.4}
+.nav-copy small{font-size:10px;color:#8799a5;line-height:1.45;font-weight:400}
+.nav-menu kbd,.nav-state{font:10px Vazirmatn,Tahoma,sans-serif;color:#7c929f;background:#f1f5f7;border:1px solid #e3ebef;border-radius:7px;padding:3px 6px}
+.nav-menu-divider{height:1px;background:#eaf0f3;margin:6px 8px}
+.nav-menu .nav-logout-item .nav-icon{background:#fff0ef;color:#b84d43}
+.nav-menu .nav-logout-item:hover:not(:disabled){background:#fff5f3;color:#a53e34}
+.profile-modal-backdrop{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:18px;background:rgba(15,34,45,.34);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.profile-modal{position:relative;width:min(100%,390px);padding:27px 24px 22px;border:1px solid rgba(255,255,255,.9);border-radius:23px;background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(243,250,253,.98));box-shadow:0 26px 80px rgba(16,51,68,.23);color:#203b4d}
+.profile-modal-close{position:absolute;top:13px;left:13px;width:33px;height:33px;min-height:33px;margin:0;padding:0;border-radius:10px;background:#eef4f7;color:#607785;font:22px Tahoma,sans-serif;box-shadow:none!important}
+.profile-modal-mark{width:48px;height:48px;display:grid;place-items:center;margin:0 auto 11px;border-radius:16px;background:linear-gradient(145deg,#d9f2ff,#edf9ff);color:#1686c5;font-size:25px}
+.profile-modal h2{margin:0;text-align:center;font-size:18px}
+.profile-modal-caption{text-align:center;color:#8294a1;font-size:11px;margin:7px 0 19px}
+.profile-modal dl{margin:0;display:grid;gap:8px}
+.profile-modal dl div{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 12px;border:1px solid #e7eef2;border-radius:12px;background:#fff}
+.profile-modal dt{font-size:11px;color:#7c909d}
+.profile-modal dd{margin:0;font-size:12px;font-weight:700;color:#29495c;overflow-wrap:anywhere;text-align:left}
+.profile-modal-primary{width:100%;min-height:42px;margin-top:17px;border:0;border-radius:12px;background:linear-gradient(135deg,#229bd8,#087bb9);color:#fff;font:700 12px Vazirmatn,Tahoma,sans-serif;cursor:pointer}
+.message-context-menu{position:fixed;z-index:250;width:190px;padding:6px;border:1px solid #dce8ee;border-radius:14px;background:rgba(255,255,255,.98);box-shadow:0 14px 45px rgba(20,53,70,.2);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.message-context-menu button{width:100%;display:flex;align-items:center;gap:10px;min-height:39px;margin:0;padding:8px 10px;border:0;border-radius:9px;background:transparent;color:#315267;font:12px Vazirmatn,Tahoma,sans-serif;text-align:right;cursor:pointer;box-shadow:none!important}
+.message-context-menu button:hover,.message-context-menu button:focus-visible{background:#edf7fb;color:#0879b8;outline:none;transform:none!important}
+.message-context-menu button span{flex:1}
+body.dark .nav-menu,body.dark .message-context-menu{background:rgba(27,43,54,.98);border-color:#344a58;color:#e5edf4}
+body.dark .nav-menu-heading,body.dark .nav-menu button,body.dark .message-context-menu button{color:#e5edf4}
+body.dark .nav-menu-heading span,body.dark .nav-copy small{color:#9bb0bf}
+body.dark .nav-menu .nav-icon,body.dark .nav-menu kbd,body.dark .nav-state,body.dark .nav-menu-trigger{background:#263c4b;color:#b6d8e8;border-color:#354c5b}
+body.dark .nav-menu-divider{background:#344956}
+body.dark .nav-menu button:hover:not(:disabled),body.dark .message-context-menu button:hover{background:#263f50}
+body.dark .profile-modal{background:#1c2d3b;color:#e5edf4;border-color:#344a58}
+body.dark .profile-modal h2,body.dark .profile-modal dd{color:#e5edf4}
+body.dark .profile-modal dl div{background:#243847;border-color:#354c5d}
+body.dark .profile-modal dt,body.dark .profile-modal-caption{color:#9bb0bf}
+@media(max-width:700px){.nav-menu-trigger{min-height:36px;padding:0 10px}.nav-menu{right:auto;left:0;transform-origin:top left}.header{gap:8px}.header-title{font-size:13px}.live{font-size:9px;padding:6px 8px}.profile-modal{padding:25px 17px 18px}}
+@media(prefers-reduced-motion:reduce){.nav-menu{animation:none!important}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -133,8 +182,45 @@ body.dark .composer input{background:#243847;color:#e5edf4;border-color:#354c5d}
 <main class="main">
 <header class="header">
 <div class="header-title">گفتگوی همکاران</div>
+<div class="nav-menu-wrap" id="navMenuWrap">
+  <button class="nav-menu-trigger" id="navMenuTrigger" type="button" aria-label="باز کردن منوی پیوند" aria-haspopup="true" aria-expanded="false" title="منوی پیوند">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>منو</span>
+  </button>
+  <nav class="nav-menu" id="navMenu" aria-label="منوی اصلی" hidden>
+    <div class="nav-menu-heading">پیوند <span>دسترسی سریع</span></div>
+    <button type="button" data-nav-action="search"><span class="nav-icon">⌕</span><span class="nav-copy"><strong>جست‌وجو در پیام‌ها</strong><small>پیداکردن متن گفتگو</small></span><kbd>ج</kbd></button>
+    <button type="button" data-nav-action="starred"><span class="nav-icon">☆</span><span class="nav-copy"><strong>پیام‌های نشان‌شده</strong><small>پیام‌های ذخیره‌شده روی این دستگاه</small></span></button>
+    <div class="nav-menu-divider"></div>
+    <button type="button" data-nav-action="profile"><span class="nav-icon">◎</span><span class="nav-copy"><strong>اطلاعات حساب</strong><small>مشاهده مشخصات و سطح دسترسی</small></span></button>
+    <button type="button" data-nav-action="theme"><span class="nav-icon">◐</span><span class="nav-copy"><strong>حالت شب</strong><small>تغییر ظاهر گفتگو</small></span><span class="nav-state" id="navThemeState">خاموش</span></button>
+    <button type="button" data-nav-action="admin" id="navAdminItem" hidden><span class="nav-icon">♙</span><span class="nav-copy"><strong>پنل مدیریت</strong><small>ابزارهای متناسب با نقش شما</small></span></button>
+    <button type="button" data-nav-action="login" id="navLoginItem" hidden><span class="nav-icon">↗</span><span class="nav-copy"><strong>ورود همکاران</strong><small>برای ارسال پیام و امکانات کامل</small></span></button>
+    <div class="nav-menu-divider"></div>
+    <button type="button" class="nav-logout-item" data-nav-action="logout"><span class="nav-icon">⇥</span><span class="nav-copy"><strong id="navLogoutLabel">خروج از حساب</strong><small>پایان نشست فعلی</small></span></button>
+  </nav>
+</div>
 <div class="live" id="connectionStatus">در حال اتصال...</div>
 </header>
+<div class="profile-modal-backdrop" id="profileModalBackdrop" hidden>
+  <section class="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
+    <button type="button" class="profile-modal-close" id="profileModalClose" aria-label="بستن">×</button>
+    <div class="profile-modal-mark">◎</div>
+    <h2 id="profileModalTitle">اطلاعات حساب</h2>
+    <p class="profile-modal-caption">مشخصات حساب جاری در پیوند</p>
+    <dl>
+      <div><dt>نام و نام خانوادگی</dt><dd id="profileModalName">—</dd></div>
+      <div><dt>شماره پرسنلی</dt><dd id="profileModalEmployee">—</dd></div>
+      <div><dt>سطح دسترسی</dt><dd id="profileModalRole">—</dd></div>
+      <div><dt>وضعیت</dt><dd id="profileModalStatus">—</dd></div>
+    </dl>
+    <button type="button" class="profile-modal-primary" id="profileModalDone">بستن</button>
+  </section>
+</div>
+<div class="message-context-menu" id="messageContextMenu" role="menu" hidden>
+  <button type="button" role="menuitem" data-message-action="reply">↩ <span>پاسخ به پیام</span></button>
+  <button type="button" role="menuitem" data-message-action="copy">▢ <span>کپی متن</span></button>
+  <button type="button" role="menuitem" data-message-action="star">☆ <span>نشان‌کردن پیام</span></button>
+</div>
 <div class="p-tools"><input id="pSearch" type="search" placeholder="جست‌وجو در پیام‌ها..."><button class="active" id="pAll">همه پیام‌ها</button><button id="pStarred">⭐ نشان‌شده</button><button id="pTheme">◐ حالت شب</button><button id="pEmoji">☺ ایموجی</button></div><section class="messages" id="messages"><div class="empty">در حال دریافت پیام‌ها...</div></section>
 <div class="composer">
 <input id="messageInput" type="text" maxlength="2000" placeholder="پیام خود را بنویسید..." autocomplete="off">
@@ -324,6 +410,89 @@ document.getElementById("pAll").onclick=function(){starredOnly=false;this.classL
 document.getElementById("pStarred").onclick=function(){starredOnly=true;this.classList.add("active");document.getElementById("pAll").classList.remove("active");applyMessageFilters()};
 document.getElementById("pTheme").onclick=function(){document.body.classList.toggle("dark");localStorage.setItem("peyvand_dark",document.body.classList.contains("dark"))};if(localStorage.getItem("peyvand_dark")==="true")document.body.classList.add("dark");
 document.getElementById("pEmoji").onclick=function(){const e=prompt("ایموجی را کپی کن و اینجا وارد کن: 😀 😂 😊 🙏 👍 ❤️ 🎉 🤝 💚 ✅ 🚚 ☕ 🌱");if(e){messageInput.value+=e;messageInput.focus()}};
+
+/* Navigation interactions — only routes to capabilities that already exist. */
+(function initPeyvandNavigation(){
+ const trigger=document.getElementById("navMenuTrigger");
+ const menu=document.getElementById("navMenu");
+ const wrap=document.getElementById("navMenuWrap");
+ const profileBackdrop=document.getElementById("profileModalBackdrop");
+ const contextMenu=document.getElementById("messageContextMenu");
+ let contextTarget=null,pressTimer=null,pressStart=null;
+ const roleLabels={owner:"مالک برنامه",admin:"مدیر",user:"کاربر عادی",guest:"بازدیدکننده"};
+ function openMenu(){menu.hidden=false;trigger.setAttribute("aria-expanded","true");const themeState=document.getElementById("navThemeState");themeState.textContent=document.body.classList.contains("dark")?"روشن":"خاموش";}
+ function closeMenu(){menu.hidden=true;trigger.setAttribute("aria-expanded","false");}
+ function closeContextMenu(){contextMenu.hidden=true;contextTarget=null;}
+ function closeProfile(){profileBackdrop.hidden=true;}
+ trigger.addEventListener("click",function(event){event.stopPropagation();menu.hidden?openMenu():closeMenu();});
+ document.addEventListener("click",function(event){if(!wrap.contains(event.target))closeMenu();if(!contextMenu.contains(event.target))closeContextMenu();});
+ document.addEventListener("keydown",function(event){if(event.key==="Escape"){closeMenu();closeContextMenu();closeProfile();trigger.focus();}});
+ document.getElementById("profileModalClose").addEventListener("click",closeProfile);
+ document.getElementById("profileModalDone").addEventListener("click",closeProfile);
+ profileBackdrop.addEventListener("click",function(event){if(event.target===profileBackdrop)closeProfile();});
+ function showProfile(){
+  document.getElementById("profileModalName").textContent=document.getElementById("userName").textContent||"—";
+  document.getElementById("profileModalEmployee").textContent=(document.getElementById("employeeNumber").textContent||"—").replace(/^پرسنلی:\s*/,"");
+  document.getElementById("profileModalRole").textContent=roleLabels[currentRole]||"کاربر عادی";
+  document.getElementById("profileModalStatus").textContent=demoMode?"پیش‌نمایش؛ ورود انجام نشده":"حساب فعال";
+  profileBackdrop.hidden=false;
+  document.getElementById("profileModalClose").focus();
+ }
+ menu.addEventListener("click",function(event){
+  const item=event.target.closest("[data-nav-action]");if(!item)return;
+  const action=item.dataset.navAction;closeMenu();
+  if(action==="search"){document.getElementById("pSearch").focus();document.getElementById("pSearch").scrollIntoView({block:"nearest",behavior:"smooth"});}
+  else if(action==="starred")document.getElementById("pStarred").click();
+  else if(action==="theme"){document.getElementById("pTheme").click();document.getElementById("navThemeState").textContent=document.body.classList.contains("dark")?"روشن":"خاموش";}
+  else if(action==="profile")showProfile();
+  else if(action==="admin"){if(currentRole==="owner"||currentRole==="admin")window.location.href="admin.html";}
+  else if(action==="login")window.location.href="index.html?login=1";
+  else if(action==="logout")document.getElementById("logoutButton").click();
+ });
+ function syncRoleMenu(){
+  const canManage=currentRole==="owner"||currentRole==="admin";
+  document.getElementById("navAdminItem").hidden=!canManage;
+  document.getElementById("navLoginItem").hidden=!demoMode;
+  document.getElementById("navLogoutLabel").textContent=demoMode?"ورود همکاران":"خروج از حساب";
+ }
+ const roleMenuObserver=new MutationObserver(syncRoleMenu);
+ roleMenuObserver.observe(document.getElementById("connectionStatus"),{childList:true,subtree:true,characterData:true});
+ const roleSyncTimer=setInterval(function(){syncRoleMenu();if(currentRole!=="guest"||demoMode)clearInterval(roleSyncTimer);},250);
+ syncRoleMenu();
+ // Right-click on desktop and press-and-hold on touch open message actions.
+ function openContextFor(message,x,y){
+  if(!message)return;contextTarget=message;contextMenu.hidden=false;
+  const w=190,h=contextMenu.offsetHeight||135,pad=8;
+  contextMenu.style.left=Math.max(pad,Math.min(x,window.innerWidth-w-pad))+"px";
+  contextMenu.style.top=Math.max(pad,Math.min(y,window.innerHeight-h-pad))+"px";
+  const star=message.querySelector(".p-star");
+  const starItem=contextMenu.querySelector('[data-message-action="star"] span');
+  starItem.textContent=star&&star.classList.contains("on")?"برداشتن نشان":"نشان‌کردن پیام";
+ }
+ document.getElementById("messages").addEventListener("contextmenu",function(event){
+  const message=event.target.closest(".message");if(!message)return;
+  event.preventDefault();openContextFor(message,event.clientX,event.clientY);
+ });
+ document.getElementById("messages").addEventListener("pointerdown",function(event){
+  const message=event.target.closest(".message");if(!message||event.pointerType==="mouse")return;
+  pressStart={x:event.clientX,y:event.clientY};clearTimeout(pressTimer);
+  pressTimer=setTimeout(function(){if(pressStart){openContextFor(message,pressStart.x,pressStart.y);pressStart=null;}},520);
+ });
+ document.getElementById("messages").addEventListener("pointermove",function(event){
+  if(pressStart&&Math.hypot(event.clientX-pressStart.x,event.clientY-pressStart.y)>12){clearTimeout(pressTimer);pressStart=null;}
+ });
+ ["pointerup","pointercancel","pointerleave"].forEach(type=>document.getElementById("messages").addEventListener(type,function(){clearTimeout(pressTimer);pressStart=null;}));
+ contextMenu.addEventListener("click",function(event){
+  const item=event.target.closest("[data-message-action]");if(!item||!contextTarget)return;
+  const action=item.dataset.messageAction;
+  const targetButton=action==="reply"?contextTarget.querySelector(".p-action"):action==="copy"?contextTarget.querySelectorAll(".p-action")[1]:contextTarget.querySelector(".p-star");
+  closeContextMenu();
+  if(targetButton)targetButton.click();
+ });
+ window.addEventListener("resize",closeContextMenu);
+ document.getElementById("messages").addEventListener("scroll",closeContextMenu,{passive:true});
+})();
+
 </script>
 </body>
 </html>
