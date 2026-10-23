@@ -308,9 +308,11 @@ function subscribeRealtime(){
 })();
 
 supabaseClient.auth.onAuthStateChange(function(event,session){
- if(event==="SIGNED_OUT"||!session){
+ // An unauthenticated visitor is allowed to stay in read-only preview.
+ // Only redirect after an actual sign-out event, and never redirect guests in demo mode.
+ if(event==="SIGNED_OUT" && !demoMode){
   localStorage.removeItem("peyvand_name");localStorage.removeItem("peyvand_employee");localStorage.removeItem("peyvand_user_id");
-  if(!window.location.pathname.endsWith("index.html"))window.location.replace("index.html");
+  if(!window.location.pathname.endsWith("index.html"))window.location.replace("index.html?login=1");
  }
 });
 let starredOnly=false;
