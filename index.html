@@ -315,6 +315,9 @@ logoutBtn.addEventListener("click",async()=>{
     localStorage.removeItem("peyvand_name");
     localStorage.removeItem("peyvand_employee");
     localStorage.removeItem("peyvand_user_id");
+    if(new URLSearchParams(window.location.search).get("login")!=="1"){
+      window.location.replace("chat.html?demo=1");
+    }
   }
 })();
 
