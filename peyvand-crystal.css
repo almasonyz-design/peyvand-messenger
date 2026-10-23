@@ -265,3 +265,21 @@ body.dark .p-tools button.active{background:linear-gradient(145deg,rgba(30,125,7
 @supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){
  .login-box,.panel,.app,.sidebar,.user-box,.header,.p-tools,.composer,.message{background:rgba(242,255,247,.96)!important}
 }
+
+/* PEYVAND performance pass: preserve the crystal look with a lighter rendering budget */
+@media (max-width: 900px) {
+  body:before, body:after { animation:none!important; }
+  .login-box,.panel,.info,.app,.sidebar,.user-box,.chat-title,.header,.p-tools,.composer,.empty,.message {
+    -webkit-backdrop-filter:blur(8px) saturate(115%)!important;
+    backdrop-filter:blur(8px) saturate(115%)!important;
+  }
+}
+body:before,body:after { will-change:auto!important; }
+.login-box:after { animation-duration:18s!important; }
+.sidebar:before { animation:none!important; }
+#connectionStatus { animation:none!important; }
+.message { animation:none!important; }
+button,.account-btn,.p-tools button,.composer button { transition:transform .14s ease,box-shadow .14s ease!important; }
+@media (prefers-reduced-motion:reduce) {
+  body:before,body:after,.login-box:after,.sidebar:before { animation:none!important; }
+}
