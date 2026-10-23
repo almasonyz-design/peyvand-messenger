@@ -196,7 +196,7 @@ body.dark .profile-modal dt,body.dark .profile-modal-caption{color:#9bb0bf}
     <button type="button" data-nav-action="admin" id="navAdminItem" hidden><span class="nav-icon">♙</span><span class="nav-copy"><strong>پنل مدیریت</strong><small>ابزارهای متناسب با نقش شما</small></span></button>
     <button type="button" data-nav-action="login" id="navLoginItem" hidden><span class="nav-icon">↗</span><span class="nav-copy"><strong>ورود همکاران</strong><small>برای ارسال پیام و امکانات کامل</small></span></button>
     <div class="nav-menu-divider"></div>
-    <button type="button" class="nav-logout-item" data-nav-action="logout"><span class="nav-icon">⇥</span><span class="nav-copy"><strong id="navLogoutLabel">خروج از حساب</strong><small>پایان نشست فعلی</small></span></button>
+    <button type="button" class="nav-logout-item" id="navLogoutItem" data-nav-action="logout"><span class="nav-icon">⇥</span><span class="nav-copy"><strong id="navLogoutLabel">خروج از حساب</strong><small>پایان نشست فعلی</small></span></button>
   </nav>
 </div>
 <div class="live" id="connectionStatus">در حال اتصال...</div>
@@ -453,7 +453,8 @@ document.getElementById("pEmoji").onclick=function(){const e=prompt("ایموج�
   const canManage=currentRole==="owner"||currentRole==="admin";
   document.getElementById("navAdminItem").hidden=!canManage;
   document.getElementById("navLoginItem").hidden=!demoMode;
-  document.getElementById("navLogoutLabel").textContent=demoMode?"ورود همکاران":"خروج از حساب";
+  document.getElementById("navLogoutItem").hidden=demoMode;
+  document.getElementById("navLogoutLabel").textContent="خروج از حساب";
  }
  const roleMenuObserver=new MutationObserver(syncRoleMenu);
  roleMenuObserver.observe(document.getElementById("connectionStatus"),{childList:true,subtree:true,characterData:true});
