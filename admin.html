@@ -213,13 +213,15 @@ async function approveAccessRequest(id,button){
 }
 
 async function rejectAccessRequest(id,button){
-  if(!confirm("این درخواست رد شود؟"))return;
+  if(!confirm("این درخواست رد شود و حساب ثبت‌نامی آن حذف شود؟"))return;
   button.disabled=true;
-  const {error}=await supabaseClient.from("peyvand_access_requests")
-    .update({status:"rejected",reviewed_at:new Date().toISOString()}).eq("id",id).eq("status","pending");
-  if(error){alert("رد درخواست انجام نشد: "+error.message);button.disabled=false;return;}
-  accessRequestActionResult.innerHTML='<p class="ok">درخواست رد شد.</p>';
-  await loadAccessRequests();
+  try{
+    const {data,error}=await supabaseClient.functions.invoke("reject-peyvand-request",{body:{request_id:id}});
+    if(error)throw new Error(error.message||"رد درخواست انجام نشد.");
+    if(!data?.success)throw new Error(data?.error||"رد درخواست انجام نشد.");
+    accessRequestActionResult.innerHTML='<p class="ok">درخواست رد و حساب ثبت‌نامی حذف شد.</p>';
+    await loadAccessRequests();
+  }catch(e){alert("رد درخواست انجام نشد: "+(e.message||"خطای نامشخص"));button.disabled=false;}
 }
 document.getElementById("refreshAccessRequestsBtn").onclick=loadAccessRequests;
 
