@@ -182,14 +182,14 @@ async function loadUsers(role){
 async function loadAccessRequests(){
   accessRequestsTable.innerHTML='<p class="muted">در حال دریافت درخواست‌ها...</p>';
   const {data,error}=await supabaseClient.from("peyvand_access_requests")
-    .select("id,full_name,employee_number,phone,status,created_at")
+    .select("id,full_name,employee_number,phone,branch_code,marketing_account_number,status,created_at")
     .eq("status","pending").order("created_at",{ascending:true});
   if(error){accessRequestsTable.innerHTML='<p class="error">خطا در دریافت درخواست‌ها: '+esc(error.message)+'</p>';return;}
   const rows=data||[];
   if(!rows.length){accessRequestsTable.innerHTML='<p class="muted">درخواست تأییدنشده‌ای وجود ندارد.</p>';return;}
-  let html='<table><tr><th>نام</th><th>پرسنلی</th><th>همراه</th><th>زمان درخواست</th><th>تصمیم</th></tr>';
+  let html='<table><tr><th>نام</th><th>پرسنلی</th><th>همراه</th><th>کد شعبه</th><th>حساب بازاریابی</th><th>زمان درخواست</th><th>تصمیم</th></tr>';
   for(const r of rows){
-    html+='<tr><td>'+esc(r.full_name)+'</td><td>'+esc(r.employee_number)+'</td><td dir="ltr">'+esc(r.phone)+'</td><td>'+new Date(r.created_at).toLocaleString("fa-IR")+'</td><td><div class="actions"><button data-approve-request="'+esc(r.id)+'">تأیید و ساخت حساب</button><button class="danger" data-reject-request="'+esc(r.id)+'">رد درخواست</button></div></td></tr>';
+    html+='<tr><td>'+esc(r.full_name)+'</td><td>'+esc(r.employee_number)+'</td><td dir="ltr">'+esc(r.phone)+'</td><td>'+esc(r.branch_code||"—")+'</td><td dir="ltr">'+esc(r.marketing_account_number||"—")+'</td><td>'+new Date(r.created_at).toLocaleString("fa-IR")+'</td><td><div class="actions"><button data-approve-request="'+esc(r.id)+'">تأیید ثبت‌نام</button><button class="danger" data-reject-request="'+esc(r.id)+'">رد درخواست</button></div></td></tr>';
   }
   html+='</table>';accessRequestsTable.innerHTML=html;
   document.querySelectorAll("[data-approve-request]").forEach(b=>b.onclick=()=>approveAccessRequest(b.dataset.approveRequest,b));
@@ -197,23 +197,14 @@ async function loadAccessRequests(){
 }
 
 async function approveAccessRequest(id,button){
-  if(!confirm("درخواست را تأیید و برای این همکار حساب کاربری بسازم؟"))return;
-  const rowResult=await supabaseClient.from("peyvand_access_requests")
-    .select("id,full_name,employee_number,phone,status").eq("id",id).eq("status","pending").maybeSingle();
-  if(rowResult.error||!rowResult.data){alert("درخواست دیگر در انتظار نیست یا دریافت آن ممکن نشد.");await loadAccessRequests();return;}
-  const r=rowResult.data;
-  button.disabled=true;button.textContent="در حال ساخت حساب...";
+  if(!confirm("ثبت‌نام این همکار تأیید و حسابی که خودش ساخته فعال شود؟"))return;
+  button.disabled=true;button.textContent="در حال تأیید...";
   accessRequestActionResult.innerHTML="";
   try{
-    const {data,error}=await supabaseClient.functions.invoke("create-peyvand-user",{
-      body:{full_name:r.full_name,employee_number:r.employee_number,phone:r.phone,role:"user"}
-    });
-    if(error)throw new Error(error.message||"ساخت حساب انجام نشد.");
-    if(!data?.success)throw new Error(data?.error||"ساخت حساب انجام نشد.");
-    const {error:updateError}=await supabaseClient.from("peyvand_access_requests")
-      .update({status:"approved",reviewed_at:new Date().toISOString()}).eq("id",id).eq("status","pending");
-    if(updateError)throw new Error("حساب ساخته شد، اما وضعیت درخواست ذخیره نشد؛ پیش از تلاش دوباره حساب‌ها را بررسی کن. "+updateError.message);
-    accessRequestActionResult.innerHTML='<div class="card" style="margin:0;background:#eaf7ef"><strong class="ok">✅ درخواست تأیید و حساب ساخته شد.</strong><p>نام: '+esc(data.full_name||r.full_name)+'</p><p>شماره پرسنلی: '+esc(data.employee_number||r.employee_number)+'</p><p>شماره همراه: '+esc(data.phone||r.phone)+'</p><p>رمز موقت: <strong dir="ltr">'+esc(data.temporary_password||"در پاسخ سرویس موجود نیست")+'</strong></p><p class="muted">رمز را فقط از راه خصوصی و امن به صاحب حساب بده. ورود با شماره همراه به‌تنهایی فعال نشده است.</p></div>';
+    const {data,error}=await supabaseClient.functions.invoke("approve-peyvand-request",{body:{request_id:id}});
+    if(error)throw new Error(error.message||"تأیید انجام نشد.");
+    if(!data?.success)throw new Error(data?.error||"تأیید انجام نشد.");
+    accessRequestActionResult.innerHTML='<p class="ok">ثبت‌نام تأیید شد؛ همکار اکنون می‌تواند با همان رمزی که هنگام ثبت‌نام انتخاب کرده وارد شود. رمز او برای مدیر نمایش داده نمی‌شود.</p>';
     await loadAccessRequests();
   }catch(e){
     accessRequestActionResult.innerHTML='<p class="error">تأیید انجام نشد: '+esc(e.message||"خطای نامشخص")+'</p>';
