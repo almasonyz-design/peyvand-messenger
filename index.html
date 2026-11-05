@@ -3,12 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script>
-/* TEMPORARY: bypass the password/login page and open the read-only preview. */
-(function(){
-  window.location.replace("chat.html?demo=1&nav=20261105-preview");
-})();
-</script>
+
 <title>پیوند | ورود همکاران</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
@@ -98,7 +93,7 @@ form button[type=submit]{min-height:47px;margin-top:17px;border-radius:11px;back
     <input id="password" type="password" placeholder="رمز عبور" required>
 
     <button id="loginButton" type="submit">ورود به پیوند</button>
-    <button id="requestAccessBtn" class="secondary" type="button">درخواست دسترسی جدید</button>
+    <button id="requestAccessBtn" class="secondary" type="button">ثبت‌نام همکار جدید</button>
     <div id="errorBox" class="error"></div>
     <div id="successBox" class="success"></div>
   </form>
@@ -113,6 +108,11 @@ form button[type=submit]{min-height:47px;margin-top:17px;border-radius:11px;back
       <input id="requestEmployee" required maxlength="40" placeholder="شماره پرسنلی">
       <label for="requestPhone">شماره همراه</label>
       <input id="requestPhone" required maxlength="20" inputmode="tel" placeholder="مثلاً 09121234567">
+      <label for="requestBranch">کد شعبه</label><input id="requestBranch" required maxlength="20" placeholder="کد شعبه">
+      <label for="requestMarketing">شماره حساب بازاریابی</label><input id="requestMarketing" required maxlength="40" placeholder="شماره حساب بازاریابی">
+      <label for="requestPassword">رمز عبور دلخواه</label><input id="requestPassword" type="password" required minlength="8" autocomplete="new-password" placeholder="حداقل ۸ نویسه">
+      <label for="requestPassword2">تکرار رمز عبور</label><input id="requestPassword2" type="password" required minlength="8" autocomplete="new-password" placeholder="تکرار رمز عبور">
+      <div class="muted">رمز عبور نزد مدیر نمایش داده نمی‌شود و به‌صورت امن در سامانه احراز هویت ذخیره می‌شود.</div>
       <button id="sendAccessRequestBtn" type="submit">ارسال درخواست برای تأیید</button>
       <button id="cancelAccessRequestBtn" class="secondary" type="button">بازگشت به ورود</button>
       <div id="requestResult" class="muted" role="status" aria-live="polite"></div>
@@ -268,20 +268,17 @@ accessRequestForm.addEventListener("submit",async event=>{
   const employee_number=document.getElementById("requestEmployee").value.trim();
   const rawPhone=document.getElementById("requestPhone").value.trim();
   const phone=rawPhone.replace(/[\\s()-]/g,"");
-  if(!full_name||!employee_number||!phone){requestResult.textContent="همه فیلدها را تکمیل کن.";return;}
+  const branch_code=document.getElementById("requestBranch").value.trim(); const marketing_account_number=document.getElementById("requestMarketing").value.trim(); const password=document.getElementById("requestPassword").value; const password2=document.getElementById("requestPassword2").value;
+  if(!full_name||!employee_number||!phone||!branch_code||!marketing_account_number||!password||!password2){requestResult.textContent="همه فیلدها را تکمیل کن.";return;} if(password.length<8){requestResult.textContent="رمز عبور باید حداقل ۸ نویسه باشد.";return;} if(password!==password2){requestResult.textContent="تکرار رمز عبور مطابقت ندارد.";return;}
   if(!/^[+0-9]{8,16}$/.test(phone)){requestResult.textContent="شماره همراه معتبر وارد کن.";return;}
   const btn=document.getElementById("sendAccessRequestBtn");
   btn.disabled=true;btn.textContent="در حال ارسال...";
   try{
-    const {error}=await supabaseClient.from("peyvand_access_requests").insert({
-      full_name,employee_number,phone
-    });
-    if(error){
-      if(error.code==="23505") throw new Error("برای این شماره پرسنلی درخواست قبلاً ثبت شده است.");
-      throw error;
-    }
+    const {data,error}=await supabaseClient.functions.invoke("register-peyvand-request",{body:{full_name,employee_number,phone,branch_code,marketing_account_number,password}});
+    if(error) throw new Error(error.message||"ثبت‌نام انجام نشد.");
+    if(!data?.success) throw new Error(data?.error||"ثبت‌نام انجام نشد.");
     accessRequestForm.reset();
-    requestResult.textContent="درخواست ثبت شد و برای بررسی در پنل مدیریت نمایش داده می‌شود. تا تأیید مالک سیستم امکان ورود ندارید.";
+    requestResult.textContent="ثبت‌نام انجام شد و برای بررسی مالک سیستم ارسال شد. تا زمان تأیید، امکان ورود ندارید.";
   }catch(e){
     requestResult.textContent="درخواست ثبت نشد: "+(e.message||"خطای نامشخص");
   }finally{btn.disabled=false;btn.textContent="ارسال درخواست برای تأیید";}
@@ -322,7 +319,7 @@ logoutBtn.addEventListener("click",async()=>{
     localStorage.removeItem("peyvand_employee");
     localStorage.removeItem("peyvand_user_id");
     if(new URLSearchParams(window.location.search).get("login")!=="1"){
-      window.location.replace("chat.html?demo=1&nav=20261023c");
+      /* ورود مهمان غیرفعال است؛ برای مشاهده نسخه نمایشی از لینک جداگانه استفاده شود. */
     }
   }
 })();
