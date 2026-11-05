@@ -4,12 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
-/* Skip login screen by default; keep it available only through ?login=1. */
+/* TEMPORARY: bypass the password/login page and open the read-only preview. */
 (function(){
-  var params=new URLSearchParams(window.location.search);
-  if(params.get("login")!=="1"){
-    window.location.replace("chat.html?demo=1&nav=20261023c");
-  }
+  window.location.replace("chat.html?demo=1&nav=20261105-preview");
 })();
 </script>
 <title>پیوند | ورود همکاران</title>
