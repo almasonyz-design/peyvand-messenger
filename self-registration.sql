@@ -1,4 +1,7 @@
 -- Peyvand self-registration + owner approval migration
+alter table public.peyvand_employees add column if not exists branch_code text;
+alter table public.peyvand_employees add column if not exists marketing_account_number text;
+
 alter table public.peyvand_access_requests
   add column if not exists auth_user_id uuid references auth.users(id) on delete set null,
   add column if not exists branch_code text,
