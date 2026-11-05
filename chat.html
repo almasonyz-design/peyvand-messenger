@@ -164,11 +164,31 @@ body.dark .profile-modal dt,body.dark .profile-modal-caption{color:#9bb0bf}
 @media(max-width:700px){.nav-menu-trigger{min-height:36px;padding:0 10px}.nav-menu{right:auto;left:0;transform-origin:top left}.header{gap:8px}.header-title{font-size:13px}.live{font-size:9px;padding:6px 8px}.profile-modal{padding:25px 17px 18px}}
 @media(prefers-reduced-motion:reduce){.nav-menu{animation:none!important}}
 </style>
+
+<style id="peyvand-brand-logo">
+.sidebar .logo{display:flex;align-items:center;gap:11px;padding:18px 20px 10px;font-size:25px;font-weight:800;letter-spacing:-.5px;color:#126f50}
+.peyvand-brand-icon{width:48px;height:48px;flex:0 0 48px;filter:drop-shadow(0 5px 10px rgba(8,93,57,.22))}
+body.dark .sidebar .logo{color:#e6f5ed}
+@media(max-width:700px){.sidebar .logo{font-size:22px}.peyvand-brand-icon{width:43px;height:43px;flex-basis:43px}}
+</style>
 </head>
 <body>
 <div class="app">
 <aside class="sidebar">
-<div class="logo">پیوند</div>
+<div class="logo" aria-label="پیوند">
+  <svg class="peyvand-brand-icon" viewBox="0 0 64 64" role="img" aria-label="نشان پیوند">
+    <defs>
+      <linearGradient id="pvGreen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#20c879"/><stop offset="1" stop-color="#075c3b"/></linearGradient>
+      <linearGradient id="pvGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset=".55" stop-color="#d9a83e"/><stop offset="1" stop-color="#95651b"/></linearGradient>
+    </defs>
+    <rect x="2" y="2" width="60" height="60" rx="19" fill="#063f2b" stroke="url(#pvGold)" stroke-width="2.5"/>
+    <path d="M13 34c0-10 8-18 19-18s19 8 19 18-8 17-19 17H22l-8 5 2-10c-2-3-3-7-3-12Z" fill="url(#pvGreen)" stroke="#c9f5d8" stroke-width="1.5"/>
+    <circle cx="25" cy="34" r="2.8" fill="#fff8dc"/><circle cx="32" cy="34" r="2.8" fill="#fff8dc"/><circle cx="39" cy="34" r="2.8" fill="#fff8dc"/>
+    <path d="M48 44c5-7 7-14 6-22M51 31l-7-3m9-3-6-5m3 16 6-3" fill="none" stroke="url(#pvGold)" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M12 48c9 7 27 8 40 0" fill="none" stroke="url(#pvGold)" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+  <span>پیوند</span>
+</div>
 <div class="subtitle">پیام‌رسان همکاران</div>
 <div class="user-box">
 <div class="user-name" id="userName">کاربر</div>
